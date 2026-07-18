@@ -1,0 +1,29 @@
+  const exportToCSV = () => {
+    const headers = ['OS Number', 'Driver Name', 'Vehicle Plate', 'Origin', 'Destination', 'Status', 'Freight Value (R$)', 'Toll (R$)', 'Other Expenses (R$)', 'Total Value (R$)', 'Created At'];
+    
+    const csvData = orders.map(os => {
+      return [
+        os.number,
+        `"${os.driverName || ''}"`,
+        `"${os.driverPlate || ''}"`,
+        `"${os.origin || ''}"`,
+        `"${os.destinations?.[0] || ''}"`,
+        os.status,
+        os.grossValue || 0,
+        os.tollCost || 0,
+        os.otherExpenses || 0,
+        (os.grossValue || 0) + (os.tollCost || 0) + (os.otherExpenses || 0),
+        new Date(os.createdAt).toLocaleDateString('pt-BR')
+      ].join(',');
+    });
+    
+    const csvContent = [headers.join(','), ...csvData].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ordens_de_servico_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
