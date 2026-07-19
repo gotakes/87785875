@@ -90,7 +90,7 @@ export default function FleetMap({ drivers }: MapProps) {
           marker.setLatLng([data.lat, data.lng]);
           
           // Update icon if status changed
-          const isOffline = (Date.now() - new Date(data.updatedAt).getTime()) > 10000;
+          const isOffline = (Date.now() - new Date(data.updatedAt).getTime()) > 300000;
           const status = isOffline ? 'OFFLINE' : (data.status || 'PARKED');
           marker.setIcon(createDriverIcon(status));
         }
@@ -131,7 +131,7 @@ export default function FleetMap({ drivers }: MapProps) {
     if (realTimeLoc && realTimeLoc.updatedAt) {
       const lastUpdate = new Date(realTimeLoc.updatedAt).getTime();
       const diffSeconds = (Date.now() - lastUpdate) / 1000;
-      status = diffSeconds > 10 ? 'OFFLINE' : (realTimeLoc.status || 'PARKED');
+      status = diffSeconds > 300 ? 'OFFLINE' : (realTimeLoc.status || 'PARKED');
     } else {
       status = driver.status === 'MOVING' ? 'MOVING' : 'PARKED';
     }

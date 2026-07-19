@@ -23,46 +23,98 @@ export default function DriverPanel({ driver, orders, onLogout }: DriverPanelPro
   const [showFiscal, setShowFiscal] = useState(false);
   const [statementData, setStatementData] = useState<{orders: OrderService[], role: 'CLIENT' | 'DRIVER' | 'ADMIN_TO_CLIENT' | 'ADMIN_TO_DRIVER', targetName: string, targetDocument: string, driverBankDetails: any} | null>(null);
 
+  const [wakeLock, setWakeLock] = useState<any>(null);
+
   useEffect(() => {
-    // Geo-tracking optimized for real-time (2s)
+    // Geo-tracking optimized for real-time and background resilience
     const hasActiveOrder = orders.some(o => o.status === 'IN_TRANSIT');
-    let intervalId: any;
+    let watchId: number;
+    let currentWakeLock: any = null;
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator && hasActiveOrder) {
+          currentWakeLock = await (navigator as any).wakeLock.request('screen');
+          setWakeLock(currentWakeLock);
+        }
+      } catch (err: any) {
+        console.warn('Wake Lock error:', err.message);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && hasActiveOrder) {
+        requestWakeLock();
+        sendLocation(); // Força envio imediato ao voltar
+      }
+    };
+
+    const sendLocation = () => {
+      if (!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const locRef = doc(db, 'locations', driver.id);
+          setDoc(locRef, {
+            driverId: driver.id,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            speed: position.coords.speed,
+            heading: position.coords.heading,
+            status: 'MOVING',
+            updatedAt: new Date().toISOString()
+          }, { merge: true }).catch(console.error);
+        },
+        (error) => {
+          console.warn('Geolocation warning:', error.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    };
 
     if (navigator.geolocation && hasActiveOrder) {
       const driverRef = doc(db, 'drivers', driver.id);
       updateDoc(driverRef, { status: 'MOVING' }).catch(console.error);
       
-      const sendLocation = () => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const locRef = doc(db, 'locations', driver.id);
-            setDoc(locRef, {
-              driverId: driver.id,
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-              speed: position.coords.speed,
-              heading: position.coords.heading,
-              status: 'MOVING',
-              updatedAt: new Date().toISOString()
-            }, { merge: true }).catch(console.error);
-          },
-          (error) => {
-            console.warn('Geolocation warning:', error.message);
-          },
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-      };
-      
-      sendLocation();
-      intervalId = setInterval(sendLocation, 2000);
+      requestWakeLock();
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      // Usar watchPosition para melhor tracking em segundo plano no navegador
+      // O SO gerencia a captura com melhor eficiência de bateria
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const locRef = doc(db, 'locations', driver.id);
+          setDoc(locRef, {
+            driverId: driver.id,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            speed: position.coords.speed,
+            heading: position.coords.heading,
+            status: 'MOVING',
+            updatedAt: new Date().toISOString()
+          }, { merge: true }).catch(console.error);
+        },
+        (error) => {
+          console.warn('WatchPosition warning:', error.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 2000 }
+      );
+
     } else {
       const driverRef = doc(db, 'drivers', driver.id);
       updateDoc(driverRef, { status: 'PARKED' }).catch(console.error);
+      if (currentWakeLock !== null) {
+        currentWakeLock.release().catch(console.error);
+      }
     }
 
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (currentWakeLock !== null) {
+        currentWakeLock.release().catch(console.error);
+      }
     };
   }, [driver.id, orders]);
 
