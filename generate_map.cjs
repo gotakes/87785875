@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+const fs = require('fs');
+
+const code = `import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Driver } from '../types';
@@ -11,13 +13,13 @@ const createDriverIcon = (status: 'MOVING' | 'PARKED' | 'OFFLINE') => {
   if (status === 'MOVING') color = '#10b981';
   else if (status === 'PARKED') color = '#ef4444';
   
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="${color}" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  const svg = \`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="\${color}" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10 17h4V5H2v12h3"/>
     <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h2"/>
     <path d="M14 17h1"/>
     <circle cx="7.5" cy="17.5" r="2.5"/>
     <circle cx="17.5" cy="17.5" r="2.5"/>
-  </svg>`;
+  </svg>\`;
   
   return L.divIcon({
     html: svg,
@@ -44,22 +46,17 @@ interface LocationData {
 }
 
 // Helper to access Leaflet map instance
-function MapController({ onMapReady, onDragStart }: { onMapReady: (map: L.Map) => void, onDragStart: () => void }) {
+function MapController({ onMapReady }: { onMapReady: (map: L.Map) => void }) {
   const map = useMap();
   useEffect(() => {
     onMapReady(map);
-    map.on('dragstart', onDragStart);
-    return () => {
-      map.off('dragstart', onDragStart);
-    };
-  }, [map, onMapReady, onDragStart]);
+  }, [map, onMapReady]);
   return null;
 }
 
 export default function FleetMap({ drivers }: MapProps) {
   const [locations, setLocations] = useState<Record<string, LocationData>>({});
   const [autoFollow, setAutoFollow] = useState<string | null>(null);
-  const [hasInitialCentered, setHasInitialCentered] = useState(false);
   
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -72,14 +69,8 @@ export default function FleetMap({ drivers }: MapProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleDragStart = useCallback(() => {
-    setAutoFollow(null);
-  }, []);
-
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'locations'), (snapshot) => {
-      let isFirstCenter = false;
-      
       snapshot.docChanges().forEach((change) => {
         const data = change.doc.data() as LocationData;
         const driverId = change.doc.id;
@@ -95,21 +86,11 @@ export default function FleetMap({ drivers }: MapProps) {
           marker.setIcon(createDriverIcon(status));
         }
         
-        // Auto-follow logic
+        // Auto-follow
         if (autoFollow === driverId && mapRef.current) {
           mapRef.current.setView([data.lat, data.lng], mapRef.current.getZoom(), { animate: true, duration: 2 });
         }
-        
-        // Center on first location received
-        if (!hasInitialCentered && data.lat && data.lng && mapRef.current) {
-          isFirstCenter = true;
-          mapRef.current.setView([data.lat, data.lng], 13);
-        }
       });
-      
-      if (isFirstCenter) {
-        setHasInitialCentered(true);
-      }
 
       // Also update state for Sidebar
       const locData: Record<string, LocationData> = {};
@@ -120,7 +101,7 @@ export default function FleetMap({ drivers }: MapProps) {
     });
 
     return () => unsubscribe();
-  }, [autoFollow, hasInitialCentered]);
+  }, [autoFollow]);
 
   const center: [number, number] = [-15.793889, -47.882778];
 
@@ -170,14 +151,14 @@ export default function FleetMap({ drivers }: MapProps) {
               {mapMarkers.map(driver => (
                 <li 
                   key={driver.id} 
-                  className={`p-3 md:p-4 hover:bg-slate-50 cursor-pointer transition-colors group flex flex-col gap-2 ${autoFollow === driver.id ? 'bg-indigo-50/50' : ''}`}
+                  className={\`p-3 md:p-4 hover:bg-slate-50 cursor-pointer transition-colors group flex flex-col gap-2 \${autoFollow === driver.id ? 'bg-indigo-50/50' : ''}\`}
                   onClick={() => handleCenterDriver(driver.id, driver.lat!, driver.lng!)}
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-medium text-slate-900 flex items-center gap-1.5">
                         {driver.name}
-                        {autoFollow === driver.id && <span title="Seguindo automaticamente"><Target size={14} className="text-indigo-600 animate-pulse" /></span>}
+                        {autoFollow === driver.id && <Target size={14} className="text-indigo-600 animate-pulse" title="Seguindo automaticamente" />}
                       </p>
                       <p className="text-xs text-slate-500 mt-0.5">{driver.vehiclePlateHorse}</p>
                     </div>
@@ -191,12 +172,12 @@ export default function FleetMap({ drivers }: MapProps) {
                   </div>
                   
                   <div className="flex items-center justify-between mt-1">
-                    <span className={`text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    <span className={\`text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded-full \${
                       driver.status === 'OFFLINE' ? 'bg-slate-100 text-slate-500' : 
                       driver.status === 'MOVING' ? 'bg-emerald-100 text-emerald-700' : 
                       'bg-amber-100 text-amber-700'
-                    }`}>
-                      {driver.status === 'OFFLINE' ? 'Motorista offline' : driver.status === 'MOVING' ? 'Motorista online' : 'Motorista online (Parado)'}
+                    }\`}>
+                      {driver.status === 'OFFLINE' ? 'Motorista offline' : driver.status === 'MOVING' ? 'Motorista online (Em Movimento)' : 'Motorista online (Parado)'}
                     </span>
                     
                     {driver.speed !== undefined && driver.status !== 'OFFLINE' && (
@@ -228,10 +209,7 @@ export default function FleetMap({ drivers }: MapProps) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapController 
-            onMapReady={(map) => { mapRef.current = map; }} 
-            onDragStart={handleDragStart}
-          />
+          <MapController onMapReady={(map) => { mapRef.current = map; }} />
           
           {mapMarkers.map((driver) => (
             <Marker 
@@ -285,3 +263,7 @@ export default function FleetMap({ drivers }: MapProps) {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/components/Map.tsx', code);
+console.log("Patched Map.tsx successfully");

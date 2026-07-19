@@ -2253,12 +2253,17 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
                       onClick={async () => {
                         const selected = driverOrders.filter(o => selectedOsIds[o.id!] && o.paymentStatusDriver !== 'PAID');
                         if (selected.length === 0) return toast.error('Selecione OSs pendentes');
-                        for (const os of selected) {
-                          const { updateDoc, doc } = await import('firebase/firestore');
-                          const { db } = await import('../firebase');
-                          await updateDoc(doc(db, 'orders', os.id!), { paymentStatusDriver: 'PAID', driverPaymentStatus: 'Pago' });
+                        try {
+                          for (const os of selected) {
+                            const { updateDoc, doc } = await import('firebase/firestore');
+                            const { db } = await import('../firebase');
+                            await updateDoc(doc(db, 'orders', os.id!), { paymentStatusDriver: 'PAID', driverPaymentStatus: 'Pago' });
+                          }
+                          import('sonner').then(({toast}) => toast.success('Pagamento confirmado!'));
+                        } catch (error) {
+                          console.error("Error updating payments:", error);
+                          import('sonner').then(({toast}) => toast.error('Erro ao atualizar pagamentos.'));
                         }
-                        import('sonner').then(({toast}) => toast.success('Pagamento confirmado!'));
                         setSelectedOsIds({});
                       }}
                       className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold flex items-center gap-2 transition-colors shadow-sm"
@@ -2419,12 +2424,17 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
                       onClick={async () => {
                         const selected = clientOrders.filter(o => selectedOsIds[o.id!] && o.paymentStatusClient !== 'PAID');
                         if (selected.length === 0) return toast.error('Selecione OSs pendentes');
-                        for (const os of selected) {
-                          const { updateDoc, doc } = await import('firebase/firestore');
-                          const { db } = await import('../firebase');
-                          await updateDoc(doc(db, 'orders', os.id!), { paymentStatusClient: 'PAID', clientPaymentStatus: 'Pago' });
+                        try {
+                          for (const os of selected) {
+                            const { updateDoc, doc } = await import('firebase/firestore');
+                            const { db } = await import('../firebase');
+                            await updateDoc(doc(db, 'orders', os.id!), { paymentStatusClient: 'PAID', clientPaymentStatus: 'Pago' });
+                          }
+                          import('sonner').then(({toast}) => toast.success('Recebimento confirmado!'));
+                        } catch (error) {
+                          console.error("Error updating receipts:", error);
+                          import('sonner').then(({toast}) => toast.error('Erro ao atualizar recebimentos.'));
                         }
-                        import('sonner').then(({toast}) => toast.success('Recebimento confirmado!'));
                         setSelectedOsIds({});
                       }}
                       className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold flex items-center gap-2 transition-colors shadow-sm"

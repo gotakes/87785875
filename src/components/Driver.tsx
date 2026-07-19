@@ -6,7 +6,7 @@ import PrintStatementModal from './PrintStatementModal';
 import PrintFiscalModal from './PrintFiscalModal';
 import { Truck, MapPin, FileDown, Share2, Banknote, Navigation, Fuel, Route, LogOut, CheckCircle2, Camera, UploadCloud, FileText , Map as MapIcon, MessageCircle} from 'lucide-react';
 import { db } from '../firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, setDoc } from 'firebase/firestore';
 import { toast } from 'sonner';
 
 interface DriverPanelProps {
@@ -24,34 +24,45 @@ export default function DriverPanel({ driver, orders, onLogout }: DriverPanelPro
   const [statementData, setStatementData] = useState<{orders: OrderService[], role: 'CLIENT' | 'DRIVER' | 'ADMIN_TO_CLIENT' | 'ADMIN_TO_DRIVER', targetName: string, targetDocument: string, driverBankDetails: any} | null>(null);
 
   useEffect(() => {
-    // Geo-tracking
-    const driverRef = doc(db, 'drivers', driver.id);
-    let watchId: number;
-
+    // Geo-tracking optimized for real-time (2s)
     const hasActiveOrder = orders.some(o => o.status === 'IN_TRANSIT');
+    let intervalId: any;
 
     if (navigator.geolocation && hasActiveOrder) {
+      const driverRef = doc(db, 'drivers', driver.id);
       updateDoc(driverRef, { status: 'MOVING' }).catch(console.error);
       
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          updateDoc(driverRef, {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            status: 'MOVING'
-          }).catch(console.error);
-        },
-        (error) => {
-          console.warn('Geolocation warning:', error.message);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
+      const sendLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const locRef = doc(db, 'locations', driver.id);
+            setDoc(locRef, {
+              driverId: driver.id,
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              speed: position.coords.speed,
+              heading: position.coords.heading,
+              status: 'MOVING',
+              updatedAt: new Date().toISOString()
+            }, { merge: true }).catch(console.error);
+          },
+          (error) => {
+            console.warn('Geolocation warning:', error.message);
+          },
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+      };
+      
+      sendLocation();
+      intervalId = setInterval(sendLocation, 2000);
     } else {
+      const driverRef = doc(db, 'drivers', driver.id);
       updateDoc(driverRef, { status: 'PARKED' }).catch(console.error);
     }
 
     return () => {
-      if (watchId) navigator.geolocation.clearWatch(watchId);
+      if (intervalId) clearInterval(intervalId);
     };
   }, [driver.id, orders]);
 
