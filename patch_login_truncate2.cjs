@@ -1,8 +1,7 @@
 const fs = require('fs');
 let code = fs.readFileSync('src/components/Login.tsx', 'utf8');
 
-// Replace truncate on labels in login
-code = code.replace(/mb-1.5 truncate"/g, 'mb-1.5"');
+code = code.replace(/ truncate/g, '');
 
 fs.writeFileSync('src/components/Login.tsx', code);
-console.log("Patched Login.tsx");
+console.log("Patched Login.tsx all truncates");

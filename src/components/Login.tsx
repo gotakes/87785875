@@ -266,7 +266,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
 
                 <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                       Tipo de Veículo
                     </label>
                     <select
@@ -285,7 +285,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                       Capacidade (Kg)
                     </label>
                     <input
@@ -297,7 +297,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                     />
                   </div>
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                       Carroceria
                     </label>
                     <input
@@ -309,7 +309,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                     />
                   </div>
                   <div>
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                       Ano/Modelo
                     </label>
                     <input
@@ -327,17 +327,17 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                   <div className="grid grid-cols-3 gap-2">
                     <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docCNH ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                       <Upload size={18} className={`${docCNH ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
-                      <span className="text-xs font-medium text-slate-500 text-center truncate w-full px-1">{docCNH ? docCNH.name : 'CNH'}</span>
+                      <span className="text-xs font-medium text-slate-500 text-center w-full px-1">{docCNH ? docCNH.name : 'CNH'}</span>
                       <input type="file" className="hidden" accept="image/*" onChange={(e) => setDocCNH(e.target.files?.[0] || null)} />
                     </label>
                     <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docRG ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                       <Upload size={18} className={`${docRG ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
-                      <span className="text-xs font-medium text-slate-500 text-center truncate w-full px-1">{docRG ? docRG.name : 'RG'}</span>
+                      <span className="text-xs font-medium text-slate-500 text-center w-full px-1">{docRG ? docRG.name : 'RG'}</span>
                       <input type="file" className="hidden" accept="image/*" onChange={(e) => setDocRG(e.target.files?.[0] || null)} />
                     </label>
                     <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docAddress ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                       <Upload size={18} className={`${docAddress ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
-                      <span className="text-xs font-medium text-slate-500 text-center truncate w-full px-1 text-balance leading-tight">{docAddress ? docAddress.name : 'Comp. Endereço'}</span>
+                      <span className="text-xs font-medium text-slate-500 text-center w-full px-1 text-balance leading-tight">{docAddress ? docAddress.name : 'Comp. Endereço'}</span>
                       <input type="file" className="hidden" accept="image/*" onChange={(e) => setDocAddress(e.target.files?.[0] || null)} />
                     </label>
                   </div>
@@ -352,17 +352,17 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                     <div className="grid grid-cols-3 gap-2">
                       <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docCnpj ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                         <Upload size={18} className={`${docCnpj ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
-                        <span className="text-xs font-medium text-slate-500 text-center w-full px-1 truncate leading-tight">{docCnpj ? docCnpj.name : 'Cartão CNPJ'}</span>
+                        <span className="text-xs font-medium text-slate-500 text-center w-full px-1 leading-tight">{docCnpj ? docCnpj.name : 'Cartão CNPJ'}</span>
                         <input type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => setDocCnpj(e.target.files?.[0] || null)} />
                       </label>
                       <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docClientAddress ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                         <Upload size={18} className={`${docClientAddress ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
-                        <span className="text-xs font-medium text-slate-500 text-center w-full px-1 truncate leading-tight">{docClientAddress ? docClientAddress.name : 'Comp. Endereço'}</span>
+                        <span className="text-xs font-medium text-slate-500 text-center w-full px-1 leading-tight">{docClientAddress ? docClientAddress.name : 'Comp. Endereço'}</span>
                         <input type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => setDocClientAddress(e.target.files?.[0] || null)} />
                       </label>
                       <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docClientContract ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                         <Upload size={18} className={`${docClientContract ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
-                        <span className="text-xs font-medium text-slate-500 text-center w-full px-1 truncate leading-tight">{docClientContract ? docClientContract.name : 'Contrato/Proc.'}</span>
+                        <span className="text-xs font-medium text-slate-500 text-center w-full px-1 leading-tight">{docClientContract ? docClientContract.name : 'Contrato/Proc.'}</span>
                         <input type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => setDocClientContract(e.target.files?.[0] || null)} />
                       </label>
                     </div>

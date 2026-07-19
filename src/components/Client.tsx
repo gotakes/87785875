@@ -289,7 +289,7 @@ export default function ClientPanel({ client, orders, drivers, onLogout, pricing
       <div className={`${mobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col w-64 bg-blue-900 text-blue-100 shrink-0 fixed md:static inset-y-0 left-0 z-50 h-full`}>
         <div className="p-3 md:p-6 border-b border-blue-800">
           <h1 className="text-lg md:text-xl font-bold tracking-tight font-display text-white mb-1">Portal do Cliente</h1>
-          <p className="text-xs font-medium text-blue-300 truncate">{client.name}</p>
+          <p className="text-xs font-medium text-blue-300">{client.name}</p>
         </div>
         <nav className="flex-1 px-4 space-y-2 mt-4">
           <button

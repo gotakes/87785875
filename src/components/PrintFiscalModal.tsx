@@ -179,7 +179,7 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
                     <tr key={idx} className="avoid-break hover:bg-slate-50">
                       <td className="py-2 px-2">{item.dataPagamento}</td>
                       <td className="py-2 px-2 font-medium">#{item.osId}</td>
-                      <td className="py-2 px-2 truncate max-w-[150px]">{item.cliente}</td>
+                      <td className="py-2 px-2 max-w-[150px]">{item.cliente}</td>
                       <td className="py-2 px-2 text-right">{formatBRL(item.bruto)}</td>
                       <td className="py-2 px-2 text-right text-red-600">{formatBRL(item.descontos)}</td>
                       <td className="py-2 px-2 text-right font-bold">{formatBRL(item.liquido)}</td>

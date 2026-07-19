@@ -2301,7 +2301,7 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
                         </td>
                         <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-slate-800">#{os.number}</td>
                         <td className="px-3 py-2 md:px-4 md:py-3 text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
-                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-700 max-w-[200px] truncate">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-700 max-w-[200px]">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
                         <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-indigo-700 text-right">{formatBRL(os.netValue || 0)}</td>
                         <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-full ${os.paymentStatusDriver === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
@@ -2467,7 +2467,7 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
                         </td>
                         <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-slate-800">#{os.number}</td>
                         <td className="px-3 py-2 md:px-4 md:py-3 text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
-                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-700 max-w-[200px] truncate">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-700 max-w-[200px]">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
                         <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-indigo-700 text-right">{formatBRL(os.totalValue || 0)}</td>
                         <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-full ${os.paymentStatusClient === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>

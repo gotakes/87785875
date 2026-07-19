@@ -183,7 +183,7 @@ export default function PrintStatementModal({ orders, role, targetName, targetDo
                   <tr key={os.id}>
                     <td className="py-3 px-2 font-bold">#{os.number}</td>
                     <td className="py-3 px-2">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
-                    <td className="py-3 px-2 truncate max-w-[200px]">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
+                    <td className="py-3 px-2 max-w-[200px]">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
                     {isClientSide && <td className="py-3 px-2">{os.vehicleType || 'Não informado'} ({os.driverPlate || '-'})</td>}
                     <td className="py-3 px-2 text-right font-semibold">{formatBRL(val || 0)}</td>
                   </tr>
