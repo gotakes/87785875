@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+const fs = require('fs');
+
+const content = `import React, { useState, useEffect, useRef } from 'react';
 import { Search, Loader2, MapPin } from 'lucide-react';
 
 interface AddressAutocompleteProps {
@@ -45,7 +47,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
       setErrorMsg(null);
       
       try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=BR&q=${encodeURIComponent(value)}`;
+        const url = \`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=BR&q=\${encodeURIComponent(value)}\`;
         const response = await fetch(url, {
           signal: abortController.signal,
           headers: {
@@ -103,7 +105,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
   }
 
   return (
-    <div className={`relative ${className}`} ref={wrapperRef}>
+    <div className={\`relative \${className}\`} ref={wrapperRef}>
       <MapPin className="absolute left-3 top-3 text-slate-400" size={18} />
       <input
         type="text"
@@ -136,3 +138,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/components/AddressAutocomplete.tsx', content);
+console.log("Patched AddressAutocomplete.tsx");

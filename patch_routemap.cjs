@@ -1,4 +1,6 @@
-import { toast } from "sonner";
+const fs = require('fs');
+
+const content = `import { toast } from "sonner";
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -65,7 +67,7 @@ function Routing({ origin, destination, isRoundTrip, onRouteCalculated }: { orig
     
     const geocode = async (query: string) => {
       try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=BR`;
+        const url = \`https://nominatim.openstreetmap.org/search?format=json&q=\${encodeURIComponent(query)}&limit=1&countrycodes=BR\`;
         const res = await fetch(url, {
           signal: abortController.signal,
           headers: {
@@ -74,7 +76,7 @@ function Routing({ origin, destination, isRoundTrip, onRouteCalculated }: { orig
         });
         
         if (!res.ok) {
-          console.error(`Geocode failed: ${res.status}`);
+          console.error(\`Geocode failed: \${res.status}\`);
           return null;
         }
         
@@ -175,3 +177,7 @@ export default function RouteMap({ origin, destination, isRoundTrip, onRouteCalc
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/components/RouteMap.tsx', content);
+console.log("Patched RouteMap.tsx");

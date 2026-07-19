@@ -131,18 +131,7 @@ export default function ClientPanel({ client, orders, drivers, onLogout, pricing
         try {
           const origins = mapOrigin.split(';');
           const dests = mapDest.split(';');
-          const response = await fetch('/api/calculate-toll', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({
-               origins,
-               destinations: dests,
-               vehicleType: currentVehicleType || 'PASSEIO',
-               axles: osFormState.axles || 2
-             })
-          });
-          const tollData = await response.json();
-          let totalToll = tollData.toll || 0;
+          let totalToll = 0; // Calculado localmente
           
           if (totalToll === 0) {
              // Fallback caso a API falhe ou falte a key
