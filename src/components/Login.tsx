@@ -160,25 +160,25 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
 
   return (
     <>
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans relative overflow-x-hidden overflow-y-auto py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-2 md:p-4 font-sans relative overflow-x-hidden overflow-y-auto py-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-96 bg-indigo-900" style={{ transform: 'skewY(-6deg) translateY(-50%)' }}></div>
       
       <div className={`max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-100 relative z-10 ${isRegistering ? 'my-8' : ''}`}>
         
-        <div className="p-8 pb-6 text-center">
-          <Truck size={48} className="mx-auto mb-4 text-indigo-600" />
-          <h1 className="text-3xl font-black font-display tracking-tight font-display text-slate-900 mb-2">El Nathan</h1>
+        <div className="p-3 md:p-8 pb-6 text-center">
+          <Truck size={48} className="mx-auto mb-3 md:mb-4 text-indigo-600" />
+          <h1 className="text-2xl md:text-3xl font-black font-display tracking-tight text-slate-900 mb-2">El Nathan</h1>
           <p className="text-slate-500 font-medium">Gestão Inteligente de Transportes</p>
         </div>
         
         {/* Role Selector Tabs */}
         {!isRegistering && !isResetting && (
-          <div className="px-8 mb-6">
+          <div className="px-8 mb-3 md:mb-6">
             <div className="flex bg-slate-100 p-1 rounded-xl">
               <button
                 onClick={() => { setRole('CLIENT'); setError(''); }}
-                className={`flex-1 py-2 text-sm font-semibold rounded-lg flex items-center justify-center gap-1 transition-all ${
+                className={`flex-1 py-2 text-xs md:text-sm font-semibold rounded-lg flex items-center justify-center gap-1 transition-all ${
                   role === 'CLIENT' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -186,7 +186,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
               </button>
               <button
                 onClick={() => { setRole('DRIVER'); setError(''); }}
-                className={`flex-1 py-2 text-sm font-semibold rounded-lg flex items-center justify-center gap-1 transition-all ${
+                className={`flex-1 py-2 text-xs md:text-sm font-semibold rounded-lg flex items-center justify-center gap-1 transition-all ${
                   role === 'DRIVER' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -194,7 +194,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
               </button>
               <button
                 onClick={() => { setRole('ADMIN'); setError(''); }}
-                className={`flex-1 py-2 text-sm font-semibold rounded-lg flex items-center justify-center gap-1 transition-all ${
+                className={`flex-1 py-2 text-xs md:text-sm font-semibold rounded-lg flex items-center justify-center gap-1 transition-all ${
                   role === 'ADMIN' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -210,7 +210,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
             {isRegistering && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                     Nome Completo {role === 'CLIENT' && '/ Razão Social'}
                   </label>
                   <div className="relative">
@@ -222,12 +222,12 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                       placeholder="Nome"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                     CPF {role === 'CLIENT' && 'ou CNPJ'}
                   </label>
                   <div className="relative">
@@ -239,7 +239,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                       placeholder="000.000.000-00"
                       value={cpf}
                       onChange={(e) => setCpf(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     />
                   </div>
                 </div>
@@ -247,7 +247,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                 {role === 'DRIVER' && (
                   <>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                     Placa do Veículo
                   </label>
                   <div className="relative">
@@ -259,20 +259,20 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                       placeholder="ABC-1234"
                       value={placa}
                       onChange={(e) => setPlaca(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
                       Tipo de Veículo
                     </label>
                     <select
                       value={tipoVeiculo}
                       onChange={(e) => setTipoVeiculo(e.target.value)}
-                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     >
                       <option value="">Selecione...</option>
                       <option value="PASSEIO">Passeio</option>
@@ -285,7 +285,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
                       Capacidade (Kg)
                     </label>
                     <input
@@ -293,11 +293,11 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                       placeholder="3.500kg"
                       value={capacityWeight}
                       onChange={(e) => setCapacityWeight(e.target.value)}
-                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
                       Carroceria
                     </label>
                     <input
@@ -305,11 +305,11 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                       placeholder="Ex: Baú"
                       value={bodyType}
                       onChange={(e) => setBodyType(e.target.value)}
-                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5 truncate">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 truncate">
                       Ano/Modelo
                     </label>
                     <input
@@ -317,13 +317,13 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                       placeholder="2022/2022"
                       value={yearModel}
                       onChange={(e) => setYearModel(e.target.value)}
-                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm bg-slate-50"
+                      className="block w-full px-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-xs md:text-sm bg-slate-50"
                     />
                   </div>
                 </div>
 
                 <div className="pt-2 pb-2 border-y border-slate-100">
-                  <p className="text-sm font-medium text-slate-700 mb-3">Documentação Obrigatória (Fotos)</p>
+                  <p className="text-xs md:text-sm font-medium text-slate-700 mb-3">Documentação Obrigatória (Fotos)</p>
                   <div className="grid grid-cols-3 gap-2">
                     <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docCNH ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                       <Upload size={18} className={`${docCNH ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
@@ -348,7 +348,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
             )}
                 {role === 'CLIENT' && isRegistering && (
                   <div className="pt-2 pb-2 border-y border-slate-100">
-                    <p className="text-sm font-medium text-slate-700 mb-3">Documentação Obrigatória (Fotos/PDF)</p>
+                    <p className="text-xs md:text-sm font-medium text-slate-700 mb-3">Documentação Obrigatória (Fotos/PDF)</p>
                     <div className="grid grid-cols-3 gap-2">
                       <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors group ${docCnpj ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 hover:bg-slate-50'}`}>
                         <Upload size={18} className={`${docCnpj ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'} mb-1`} />
@@ -370,7 +370,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                 )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                 Número de Celular
               </label>
               <div className="relative">
@@ -382,7 +382,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                   placeholder="(11) 90000-0000"
                   value={phone}
                   onChange={handlePhoneChange}
-                  className={`block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 sm:text-sm bg-slate-50 ${
+                  className={`block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 sm:text-xs md:text-sm bg-slate-50 ${
                     role === 'ADMIN' ? 'focus:ring-indigo-500 focus:border-indigo-500' : role === 'CLIENT' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-emerald-500 focus:border-emerald-500'
                   }`}
                 />
@@ -391,7 +391,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
 
             {isResetting && role !== 'ADMIN' && (
               <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
                   CPF/CNPJ (Confirmação)
                 </label>
                 <div className="relative">
@@ -412,7 +412,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
             
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-xs md:text-sm font-medium text-slate-700">
                   {isResetting ? 'Nova Senha' : `Senha ${isRegistering ? 'Nova' : ''}`}
                 </label>
                 {!isRegistering && !isResetting && (
@@ -434,7 +434,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 sm:text-sm bg-slate-50 ${
+                  className={`block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 sm:text-xs md:text-sm bg-slate-50 ${
                     role === 'ADMIN' ? 'focus:ring-indigo-500 focus:border-indigo-500' : role === 'CLIENT' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-emerald-500 focus:border-emerald-500'
                   }`}
                 />
@@ -442,7 +442,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg font-medium border border-red-100">
+              <div className="p-3 bg-red-50 text-red-600 text-xs md:text-sm rounded-lg font-medium border border-red-100">
                 {error}
               </div>
             )}
@@ -463,7 +463,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
             )}
             <button
               type="submit"
-              className={`w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white transition-all ${
+              className={`w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm md:text-base font-bold text-white transition-all ${
                 role === 'ADMIN' 
                   ? 'bg-indigo-600 hover:bg-indigo-700' 
                   : role === 'CLIENT' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-emerald-600 hover:bg-emerald-700'
@@ -480,7 +480,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
 
                           <div className="text-center mt-4 pt-4 border-t border-slate-100 space-y-3">
                 {(role === 'DRIVER' || role === 'CLIENT') && (
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs md:text-sm text-slate-500">
                     {isRegistering || isResetting ? 'Já tem uma conta e sabe a senha?' : 'Primeiro acesso?'}
                     <button
                       type="button"
@@ -496,7 +496,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                   <button
                     type="button"
                     onClick={() => { setIsRegistering(false); setIsResetting(false); setError(''); setPassword(''); }}
-                    className="text-sm font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
+                    className="text-sm md:text-base font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
                   >
                     Fazer login
                   </button>
@@ -518,20 +518,20 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
     </div>
 
       {showTermsModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-2 md:p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-              <h2 className="text-lg font-bold text-slate-900">
+            <div className="p-2 md:p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+              <h2 className="text-base md:text-lg font-bold text-slate-900">
                 {role === 'CLIENT' ? 'Termos de Serviço - Portal do Cliente' : 'Termo de Autonomia e Rastreamento - Motorista'}
               </h2>
               <button onClick={() => setShowTermsModal(false)} className="text-slate-500 hover:bg-slate-200 p-2 rounded-lg">
                 <X size={20} />
               </button>
             </div>
-            <div className="p-6 overflow-y-auto flex-1 text-sm text-slate-700 space-y-4">
+            <div className="p-3 md:p-6 overflow-y-auto flex-1 text-xs md:text-sm text-slate-700 space-y-3 md:space-y-4">
               {role === 'CLIENT' ? (
                 <>
-                  <p className="font-bold text-base text-slate-900 text-center uppercase border-b pb-2 mb-4">
+                  <p className="font-bold text-xs md:text-sm text-slate-900 text-center uppercase border-b pb-2 mb-3 md:mb-4">
                     Contrato de Prestação de Serviços de Transporte e Termos de Uso
                   </p>
                   <p><strong>1. DO OBJETO:</strong> O presente termo regula a utilização do sistema para cotação, emissão e gerenciamento de Ordens de Serviço (OS) de transportes, intermediadas pela plataforma.</p>
@@ -542,7 +542,7 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                 </>
               ) : (
                 <>
-                  <p className="font-bold text-base text-slate-900 text-center uppercase border-b pb-2 mb-4">
+                  <p className="font-bold text-xs md:text-sm text-slate-900 text-center uppercase border-b pb-2 mb-3 md:mb-4">
                     Termo de Autonomia, Inexistência de Vínculo e Consentimento de Rastreamento
                   </p>
                   <p><strong>1. DA NATUREZA DA PRESTAÇÃO DO SERVIÇO:</strong> O CONTRATADO (Motorista Parceiro) declara expressamente que atuará na qualidade de Profissional Autônomo ou Microempreendedor Individual (MEI), não existindo qualquer vínculo empregatício com a plataforma, nos moldes dos artigos 2º e 3º da CLT, possuindo total liberdade de horários e autonomia para aceitar ou recusar Ordens de Serviço (OS).</p>
@@ -553,13 +553,13 @@ export default function Login({ onLogin, onRegister, onRegisterClient, onResetPa
                 </>
               )}
             </div>
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <div className="p-2 md:p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
               <button 
                 onClick={() => {
                   setAcceptedTerms(true);
                   setShowTermsModal(false);
                 }} 
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2 rounded-lg transition-colors"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3 md:px-6 py-2 rounded-lg transition-colors"
               >
                 Eu li e Aceito os Termos
               </button>

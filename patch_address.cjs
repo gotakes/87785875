@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+const fs = require('fs');
+
+const content = `import React, { useState, useEffect, useRef } from 'react';
 import { Search, Loader2, MapPin } from 'lucide-react';
 
 interface AddressAutocompleteProps {
@@ -46,7 +48,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
       
       try {
         // Usa nosso proxy inteligente que tenta Nominatim e faz fallback pra IA
-        const response = await fetch(`/api/geocode-search?q=${encodeURIComponent(value)}`);
+        const response = await fetch(\`/api/geocode-search?q=\${encodeURIComponent(value)}\`);
         const data = await response.json();
         
         if (data && data.length > 0) {
@@ -82,7 +84,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
   }
 
   return (
-    <div className={`relative ${className}`} ref={wrapperRef}>
+    <div className={\`relative \${className}\`} ref={wrapperRef}>
       <MapPin className="absolute left-3 top-3 text-slate-400" size={18} />
       <input
         type="text"
@@ -115,3 +117,5 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
     </div>
   );
 }
+`;
+fs.writeFileSync('src/components/AddressAutocomplete.tsx', content);

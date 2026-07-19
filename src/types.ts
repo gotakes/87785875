@@ -58,6 +58,21 @@ export interface OrderService {
   yearModel?: string;
   status: 'PENDING_APPROVAL' | 'APPROVED' | 'IN_TRANSIT' | 'COMPLETED' | 'CANCELLED' | 'CANCELLED_CRITICAL';
   paymentStatusClient?: 'PENDING' | 'PAID';
+  financialPaymentStatus?: 'Pago' | 'Pendente' | 'Parcial';
+  financialPaymentType?: 'À Vista' | 'A Prazo';
+  financialPaymentMethod?: 'Pix' | 'Dinheiro' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Boleto';
+  financialDueDate?: string;
+  financialPaidDate?: string;
+  clientPaymentStatus?: 'Pago' | 'Pendente' | 'Parcial';
+  clientPaymentType?: 'À Vista' | 'A Prazo';
+  clientPaymentMethod?: 'Pix' | 'Dinheiro' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Boleto';
+  clientDueDate?: string;
+  clientPaidDate?: string;
+  
+  driverPaymentStatus?: 'Pago' | 'Pendente' | 'Parcial';
+  driverDueDate?: string;
+  driverPaidDate?: string;
+
   paymentStatusDriver?: 'PENDING' | 'PAID';
   origin: string;
   destinations: string[]; // Keep as is, using destinations[0] for end destination
@@ -81,6 +96,8 @@ export interface OrderService {
   carrierCommission?: number;
   netValue: number;
   grossValue: number;
+  kmTotal?: number;
+  weight?: number;
   totalValue?: number;
   advancePayment?: number; // Adiantamento
   invoiceNumber?: string;

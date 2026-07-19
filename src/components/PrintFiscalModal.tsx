@@ -100,12 +100,12 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
     <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] print:bg-white flex flex-col items-center py-10 print:py-0 print:block">
       <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl print:rounded-none overflow-hidden flex flex-col">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-slate-100 border-b border-slate-200 p-4 flex justify-between items-center shadow-sm print:hidden z-10">
+        <div className="sticky top-0 bg-slate-100 border-b border-slate-200 p-2 md:p-4 flex justify-between items-center shadow-sm print:hidden z-10">
           <h3 className="font-bold text-slate-900">Extrato de Rendimentos - {year}</h3>
           <div className="flex gap-2">
             <button
                 onClick={handleDownloadPdf}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors"
             >
               <Download size={18} /> Salvar
             </button>
@@ -118,46 +118,46 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
         {/* Document Content */}
         <div id="print-fiscal-content" className="p-10 print:p-0 bg-white text-slate-900 font-sans">
           
-          <div className="text-center mb-8 border-b-2 border-slate-800 pb-4">
-            <h1 className="text-2xl font-bold uppercase tracking-widest text-slate-900">Comprovante de Rendimentos</h1>
-            <h2 className="text-lg font-medium text-slate-600">Ano-Calendário {year}</h2>
+          <div className="text-center mb-3 md:mb-4 md:mb-8 border-b-2 border-slate-800 pb-4">
+            <h1 className="text-xl md:text-xl md:text-2xl font-bold uppercase tracking-widest text-slate-900">Comprovante de Rendimentos</h1>
+            <h2 className="text-base md:text-lg font-medium text-slate-600">Ano-Calendário {year}</h2>
             <p className="text-xs text-slate-500 mt-2">Documento válido para Declaração de IRPF / Carnê-Leão / DASN-SIMEI</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 mb-8 border border-slate-300 p-4 rounded bg-slate-50">
+          <div className="grid grid-cols-2 gap-1.5 md:gap-4 md:gap-8 mb-3 md:mb-4 md:mb-8 border border-slate-300 p-2 md:p-4 rounded bg-slate-50">
             <div>
               <p className="text-xs font-bold uppercase text-slate-500 mb-1">1. Fonte Pagadora</p>
               <p className="font-bold text-slate-900">{fiscalData.fontePagadora.razaoSocial}</p>
-              <p className="text-sm">CNPJ: {fiscalData.fontePagadora.cnpj}</p>
+              <p className="text-xs md:text-sm">CNPJ: {fiscalData.fontePagadora.cnpj}</p>
             </div>
             <div>
               <p className="text-xs font-bold uppercase text-slate-500 mb-1">2. Beneficiário (Motorista)</p>
               <p className="font-bold text-slate-900">{fiscalData.beneficiario.nome}</p>
-              <p className="text-sm">CPF/CNPJ: {fiscalData.beneficiario.cpfCnpj}</p>
-              <p className="text-sm">Natureza: {fiscalData.beneficiario.tipo}</p>
+              <p className="text-xs md:text-sm">CPF/CNPJ: {fiscalData.beneficiario.cpfCnpj}</p>
+              <p className="text-xs md:text-sm">Natureza: {fiscalData.beneficiario.tipo}</p>
             </div>
           </div>
 
-          <div className="mb-8">
-            <h3 className="text-sm font-bold uppercase text-slate-900 border-b border-slate-300 pb-2 mb-4">3. Resumo dos Rendimentos do Período</h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="border border-slate-200 p-4 rounded">
+          <div className="mb-3 md:mb-4 md:mb-8">
+            <h3 className="text-sm md:text-base font-bold uppercase text-slate-900 border-b border-slate-300 pb-2 mb-3 md:mb-4">3. Resumo dos Rendimentos do Período</h3>
+            <div className="grid grid-cols-3 gap-1.5 md:gap-4 text-center">
+              <div className="border border-slate-200 p-2 md:p-4 rounded">
                 <p className="text-xs font-bold text-slate-500 uppercase mb-1">Total Bruto de Fretes</p>
-                <p className="text-xl font-bold text-slate-900">{formatBRL(fiscalData.resumo.bruto)}</p>
+                <p className="text-lg md:text-xl font-bold text-slate-900">{formatBRL(fiscalData.resumo.bruto)}</p>
               </div>
-              <div className="border border-slate-200 p-4 rounded">
+              <div className="border border-slate-200 p-2 md:p-4 rounded">
                 <p className="text-xs font-bold text-slate-500 uppercase mb-1">Total de Descontos/Retenções</p>
-                <p className="text-xl font-bold text-red-600">{formatBRL(fiscalData.resumo.retencoes)}</p>
+                <p className="text-lg md:text-xl font-bold text-red-600">{formatBRL(fiscalData.resumo.retencoes)}</p>
               </div>
-              <div className="border border-slate-200 p-4 rounded bg-indigo-50 border-indigo-100">
+              <div className="border border-slate-200 p-2 md:p-4 rounded bg-indigo-50 border-indigo-100">
                 <p className="text-xs font-bold text-indigo-700 uppercase mb-1">Rendimento Líquido Pago</p>
                 <p className="text-xl font-black text-indigo-900">{formatBRL(fiscalData.resumo.liquido)}</p>
               </div>
             </div>
           </div>
 
-          <div className="mb-4">
-            <h3 className="text-sm font-bold uppercase text-slate-900 border-b border-slate-300 pb-2 mb-4">4. Relação de Pagamentos Realizados</h3>
+          <div className="mb-3 md:mb-4">
+            <h3 className="text-sm md:text-base font-bold uppercase text-slate-900 border-b border-slate-300 pb-2 mb-3 md:mb-4">4. Relação de Pagamentos Realizados</h3>
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-100 border-y border-slate-300 text-slate-700 uppercase">
@@ -199,11 +199,11 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
           </div>
 
           <div className="mt-12 pt-8 border-t border-slate-300 text-center">
-            <p className="text-xs text-slate-500 mb-6">
+            <p className="text-xs text-slate-500 mb-3 md:mb-4 md:mb-6">
               Declaramos que as informações acima são verdadeiras e refletem os repasses de fretes realizados no ano-calendário.
             </p>
             <div className="inline-block border-t border-blue-900 w-64 pt-2">
-              <p className="text-sm font-bold uppercase">EL NATHAN TRANSPORTES LTDA</p>
+              <p className="text-sm md:text-base font-bold uppercase">EL NATHAN TRANSPORTES LTDA</p>
               <p className="text-xs">Responsável Financeiro</p>
             </div>
           </div>

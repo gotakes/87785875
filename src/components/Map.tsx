@@ -145,12 +145,12 @@ export default function FleetMap({ drivers }: MapProps) {
     <div className="w-full h-full flex flex-col md:flex-row z-0 relative bg-white">
       {/* Sidebar with Drivers */}
       <div className="w-full md:w-72 bg-white border-b md:border-b-0 md:border-r border-slate-200 flex flex-col h-1/3 md:h-full z-10 relative shadow-sm shrink-0">
-        <div className="p-4 border-b border-slate-200 bg-slate-50">
+        <div className="p-2 md:p-4 border-b border-slate-200 bg-slate-50">
           <h3 className="font-semibold text-slate-800">Motoristas no Mapa</h3>
         </div>
         <div className="flex-1 overflow-y-auto">
           {mapMarkers.length === 0 ? (
-            <div className="p-6 text-center text-slate-500 text-sm">
+            <div className="p-3 md:p-6 text-center text-slate-500 text-xs md:text-sm">
               Nenhum motorista com localização registrada no momento.
             </div>
           ) : (
@@ -158,7 +158,7 @@ export default function FleetMap({ drivers }: MapProps) {
               {mapMarkers.map(driver => (
                 <li 
                   key={driver.id} 
-                  className="p-4 hover:bg-slate-50 cursor-pointer transition-colors group flex items-start justify-between"
+                  className="p-2 md:p-4 hover:bg-slate-50 cursor-pointer transition-colors group flex items-start justify-between"
                   onClick={() => setSelectedCenter([driver.lat!, driver.lng!])}
                 >
                   <div>
@@ -197,7 +197,7 @@ export default function FleetMap({ drivers }: MapProps) {
               <Popup className="rounded-lg">
                 <div className="p-1">
                   <div className="font-bold text-slate-800 mb-1">{driver.name}</div>
-                  <div className="text-sm text-slate-600 mb-2">Placa: {driver.vehiclePlateHorse}</div>
+                  <div className="text-xs md:text-sm text-slate-600 mb-2">Placa: {driver.vehiclePlateHorse}</div>
                   <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${driver.status === 'MOVING' ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
                     <span className="text-xs font-medium text-slate-700">

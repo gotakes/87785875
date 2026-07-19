@@ -100,17 +100,17 @@ export default function PrintStatementModal({ orders, role, targetName, targetDo
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] print:bg-white flex flex-col items-center py-10 print:py-0 print:block">
       <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl print:rounded-none overflow-hidden flex flex-col">
-        <div className="sticky top-0 bg-slate-100 border-b border-slate-200 p-4 flex justify-between items-center shadow-sm print:hidden z-10">
+        <div className="sticky top-0 bg-slate-100 border-b border-slate-200 p-2 md:p-4 flex justify-between items-center shadow-sm print:hidden z-10">
           <h3 className="font-bold text-slate-900">Visualização de Relatório ({orders.length} OSs)</h3>
           <div className="flex gap-2">
             {onWhatsApp && (
-              <button onClick={() => handleDownloadPdf(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              <button onClick={() => handleDownloadPdf(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors">
                 <MessageCircle size={18} /> WhatsApp (PDF)
               </button>
             )}
             <button 
                onClick={() => handleDownloadPdf()} 
-               className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+               className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors"
             >
               <FileText size={18} /> Salvar
             </button>
@@ -122,33 +122,33 @@ export default function PrintStatementModal({ orders, role, targetName, targetDo
         
         <div id="print-statement-content" className="p-10 print:p-0 bg-white">
           {/* Header */}
-          <div className="flex justify-between items-center border-b-2 border-blue-900 pb-6 mb-6">
-            <div className="flex items-center gap-4">
+          <div className="flex justify-between items-center border-b-2 border-blue-900 pb-6 mb-3 md:mb-4 md:mb-6">
+            <div className="flex items-center gap-1.5 md:gap-4">
               <img src="/logo.jpg" alt="El Nathan Transportes" className="h-28 w-auto object-contain" />
             </div>
             <div className="text-right text-blue-900">
-              <h2 className="text-xl font-bold uppercase tracking-wider">
+              <h2 className="text-lg md:text-xl font-bold uppercase tracking-wider">
                 {isClientSide ? 'Faturamento de Serviços' : 'Extrato de Repasse'}
               </h2>
-              <p className="text-sm text-slate-500 mt-1">Data: {new Date().toLocaleDateString('pt-BR')}</p>
+              <p className="text-xs md:text-sm text-slate-500 mt-1">Data: {new Date().toLocaleDateString('pt-BR')}</p>
             </div>
           </div>
 
           {/* Details */}
-          <div className="flex justify-between mb-8">
+          <div className="flex justify-between mb-3 md:mb-4 md:mb-8">
             <div>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                 {isClientSide ? 'Faturado Para:' : 'Motorista Favorecido:'}
               </p>
-              <h3 className="text-lg font-bold text-slate-900">{targetName}</h3>
-              <p className="text-sm text-slate-700">{isClientSide ? 'CNPJ/CPF:' : 'CPF:'} {targetDocument}</p>
+              <h3 className="text-base md:text-lg font-bold text-slate-900">{targetName}</h3>
+              <p className="text-xs md:text-sm text-slate-700">{isClientSide ? 'CNPJ/CPF:' : 'CPF:'} {targetDocument}</p>
             </div>
             
             {/* Bank Details */}
-            <div className="bg-slate-50 p-4 rounded border border-slate-200 min-w-[280px]">
+            <div className="bg-slate-50 p-2 md:p-4 rounded border border-slate-200 min-w-[280px]">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Dados Bancários para Pagamento</p>
               {isClientSide ? (
-                <div className="text-sm text-slate-800 space-y-1">
+                <div className="text-xs md:text-sm text-slate-800 space-y-1">
                   <p><strong>Favorecido:</strong> {TRANSPORTER_BANK_DETAILS.favored}</p>
                   <p><strong>CNPJ:</strong> {TRANSPORTER_BANK_DETAILS.cnpj}</p>
                   <p><strong>Banco:</strong> {TRANSPORTER_BANK_DETAILS.bank}</p>
@@ -156,7 +156,7 @@ export default function PrintStatementModal({ orders, role, targetName, targetDo
                   <p><strong>PIX:</strong> {TRANSPORTER_BANK_DETAILS.pix}</p>
                 </div>
               ) : (
-                <div className="text-sm text-slate-800 space-y-1">
+                <div className="text-xs md:text-sm text-slate-800 space-y-1">
                   <p><strong>Banco:</strong> {driverBankDetails?.bank || 'Não informado'}</p>
                   <p><strong>Agência:</strong> {driverBankDetails?.agency || '-'} | <strong>Conta:</strong> {driverBankDetails?.account || '-'}</p>
                   <p><strong>PIX:</strong> {driverBankDetails?.pix || 'Não informado'}</p>
@@ -166,7 +166,7 @@ export default function PrintStatementModal({ orders, role, targetName, targetDo
           </div>
 
           {/* Table */}
-          <table className="w-full text-left text-sm mb-8 border-collapse">
+          <table className="w-full text-left text-xs md:text-sm mb-3 md:mb-4 md:mb-8 border-collapse">
             <thead>
               <tr className="bg-slate-100 border-y-2 border-blue-900 text-slate-800 uppercase tracking-wider text-xs">
                 <th className="py-3 px-2">OS</th>
@@ -202,7 +202,7 @@ export default function PrintStatementModal({ orders, role, targetName, targetDo
             </tfoot>
           </table>
           
-          <div className="mt-12 text-center text-sm text-slate-500 border-t pt-4">
+          <div className="mt-12 text-center text-xs md:text-sm text-slate-500 border-t pt-4">
             Relatório gerado pelo sistema El Nathan Transportes.
           </div>
         </div>

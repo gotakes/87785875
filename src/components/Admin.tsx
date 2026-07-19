@@ -1,13 +1,15 @@
+import { ExpandableCard } from './ExpandableCard';
 import { toast } from "sonner";
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Driver, OrderService, Client } from '../types';
 import FleetMap from './Map';
 import RouteMap from './RouteMap';
-import { Menu, Banknote, X, ArrowDownToLine, ArrowUpFromLine, CircleDollarSign, Plus, Minus, Map, Truck, BarChart3, FileText, UserPlus, CreditCard, Route, CheckCircle2, LogOut, ArrowLeft, Download, FileArchive, Trash2, Edit, Search, MapPin, PlusCircle, Eraser, Car, Bus, Bike, ChevronDown, ChevronUp, Fuel, Calendar, ArrowUpDown, MessageCircle } from 'lucide-react';
+import { Menu, Banknote, X, ArrowDownToLine, ArrowUpFromLine, CircleDollarSign, Plus, Minus, Map, Truck, BarChart3, FileText, UserPlus, CreditCard, Route, CheckCircle2, LogOut, ArrowLeft, Download, FileArchive, Trash2, Edit, Search, MapPin, PlusCircle, Eraser, Car, Bus, Bike, ChevronDown, ChevronUp, Fuel, Calendar, ArrowUpDown, MessageCircle , Filter} from 'lucide-react';
 import { collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import PricingTable from './PricingTable';
+import FinancePanel from './FinancePanel';
 import { PricingTier, PricingExcess, defaultPricingTiers, defaultPricingExcess, calculateFreightValue } from '../lib/pricing';
 import AddressAutocomplete from './AddressAutocomplete';
 import PrintOsModal from './PrintOsModal';
@@ -67,32 +69,32 @@ function EditClientModal({ client, onClose }: { client: any, onClose: () => void
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-          <h2 className="text-xl font-bold text-slate-900">Editar Cliente</h2>
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[200] flex items-center justify-center p-2 md:p-4">
+      <div className="bg-white rounded-lg md:rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="p-3 md:p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <h2 className="text-lg md:text-xl font-bold text-slate-900">Editar Cliente</h2>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors">
             <X size={20} />
           </button>
         </div>
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="p-3 md:p-6">
+          <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Nome / Razão Social</label>
-              <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
+              <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Nome / Razão Social</label>
+              <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-1.5 md:py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Documento (CPF/CNPJ)</label>
-              <input type="text" value={formData.document} onChange={e => setFormData({...formData, document: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
+              <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Documento (CPF/CNPJ)</label>
+              <input type="text" value={formData.document} onChange={e => setFormData({...formData, document: e.target.value})} className="w-full px-3 py-1.5 md:py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Telefone / WhatsApp</label>
-              <input type="text" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
+              <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Telefone / WhatsApp</label>
+              <input type="text" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-3 py-1.5 md:py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Senha de Acesso</label>
+              <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Senha de Acesso</label>
               <div className="flex gap-2">
-                <input type="text" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Deixe em branco para manter" />
+                <input type="text" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="flex-1 px-3 py-1.5 md:py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Deixe em branco para manter" />
                 <button 
                   type="button" 
                   onClick={() => {
@@ -110,8 +112,8 @@ function EditClientModal({ client, onClose }: { client: any, onClose: () => void
               </div>
             </div>
             <div className="pt-4 flex justify-end gap-3">
-              <button type="button" onClick={onClose} className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors">Cancelar</button>
-              <button type="submit" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors">Salvar Alterações</button>
+              <button type="button" onClick={onClose} className="px-3 py-1.5 md:px-4 md:py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors">Cancelar</button>
+              <button type="submit" className="px-3 py-1.5 md:px-4 md:py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors">Salvar Alterações</button>
             </div>
           </form>
         </div>
@@ -172,16 +174,16 @@ function EditOsModal({ os, drivers, onClose }: { os: any, drivers: any[], onClos
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white">
-          <h2 className="text-xl font-bold text-slate-900">Editar OS #{os.number}</h2>
+    <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="bg-white rounded-lg md:rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="p-3 md:p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white">
+          <h2 className="text-lg md:text-xl font-bold text-slate-900">Editar OS #{os.number}</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg"><X size={20} /></button>
         </div>
-        <form onSubmit={handleEditOsSubmit} className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleEditOsSubmit} className="p-3 md:p-6 space-y-3 md:space-y-6">
+          <div className="grid grid-cols-2 gap-1.5 md:gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Status</label>
               <select name="status" defaultValue={os.status} className="w-full border rounded-lg px-3 py-2">
                 <option value="PENDING_APPROVAL">Pendente</option>
                 <option value="APPROVED">Aprovada</option>
@@ -192,58 +194,58 @@ function EditOsModal({ os, drivers, onClose }: { os: any, drivers: any[], onClos
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Data/Hora (Opcional)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Data/Hora (Opcional)</label>
               <input type="datetime-local" name="createdAt" className="w-full border rounded-lg px-3 py-2" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-1.5 md:gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Motorista</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Motorista</label>
               <select name="driverId" defaultValue={os.driverId || ''} className="w-full border rounded-lg px-3 py-2">
                 <option value="">Sem motorista</option>
                 {drivers.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Origem (Início)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Origem (Início)</label>
               <input name="origin" defaultValue={os.origin} className="w-full border rounded-lg px-3 py-2" />
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 md:gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Distância (KM)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Distância (KM)</label>
               <input name="distanceKm" type="number" step="0.1" defaultValue={os.distanceKm} className="w-full border rounded-lg px-3 py-2" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Valor Bruto (R$)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Valor Bruto (R$)</label>
               <input name="grossValue" type="number" step="0.01" defaultValue={os.grossValue} className="w-full border rounded-lg px-3 py-2" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Comissão (R$)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Comissão (R$)</label>
               <input name="carrierCommission" type="number" step="0.01" defaultValue={os.carrierCommission || 0} className="w-full border rounded-lg px-3 py-2" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Líquido (R$)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Líquido (R$)</label>
               <input name="netValue" type="number" step="0.01" defaultValue={os.netValue} className="w-full border rounded-lg px-3 py-2" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-1.5 md:gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Pedágio (R$)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Pedágio (R$)</label>
               <input name="tollCost" type="number" step="0.01" defaultValue={os.tollCost || 0} className="w-full border rounded-lg px-3 py-2" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Outras Desp. (R$)</label>
+              <label className="block text-xs md:text-sm font-medium mb-1">Outras Desp. (R$)</label>
               <input name="otherExpenses" type="number" step="0.01" defaultValue={os.otherExpenses || 0} className="w-full border rounded-lg px-3 py-2" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Observações</label>
+            <label className="block text-xs md:text-sm font-medium mb-1">Observações</label>
             <textarea name="observations" defaultValue={os.observations || ''} className="w-full border rounded-lg px-3 py-2" rows={3}></textarea>
           </div>
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Salvar Alterações</button>
+            <button type="button" onClick={onClose} className="px-3 py-1.5 md:px-4 md:py-2 text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+            <button type="submit" className="px-3 py-1.5 md:px-4 md:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Salvar Alterações</button>
           </div>
         </form>
       </div>
@@ -280,6 +282,20 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
   const [confirmModal, setConfirmModal] = useState<{ title: string, message: string, onConfirm: () => void } | null>(null);
   const [searchClientOs, setSearchClientOs] = useState<string>('');
   const [showMapMobile, setShowMapMobile] = useState(false);
+  const [expandedOsIds, setExpandedOsIds] = useState<Record<string, boolean>>({});
+  const [expandedClientIds, setExpandedClientIds] = useState<Record<string, boolean>>({});
+  const [expandedDriverIds, setExpandedDriverIds] = useState<Record<string, boolean>>({});
+
+  const toggleOsExpanded = (id: string) => {
+    setExpandedOsIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+  const toggleClientExpanded = (id: string) => {
+    setExpandedClientIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+  const toggleDriverExpanded = (id: string) => {
+    setExpandedDriverIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   useEffect(() => {
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
@@ -616,22 +632,22 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
       
       {/* Confirm Modal */}
       {confirmModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{confirmModal.title}</h3>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[200] flex items-center justify-center p-2 md:p-4">
+          <div className="bg-white rounded-lg md:rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-3 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2">{confirmModal.title}</h3>
               <p className="text-slate-600">{confirmModal.message}</p>
             </div>
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+            <div className="px-2 py-2 md:px-6 md:py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
               <button
                 onClick={() => setConfirmModal(null)}
-                className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-3 py-1.5 md:px-4 md:py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmModal.onConfirm}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+                className="px-3 py-1.5 md:px-4 md:py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
               >
                 Sim, excluir
               </button>
@@ -648,11 +664,11 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
         />
       )}
       <div className={`${mobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col w-64 bg-slate-900 text-slate-300 shrink-0 print:hidden fixed md:static inset-y-0 left-0 z-50 h-full`}>
-        <div className="p-6 flex justify-between items-center">
+        <div className="p-3 md:p-6 flex justify-between items-center">
           <div>
             <div className="flex items-center gap-3 text-white mb-2">
               <Truck className="w-8 h-8 text-indigo-400" />
-              <h1 className="text-xl font-bold tracking-tight font-display">El Nathan</h1>
+              <h1 className="text-lg md:text-xl font-bold tracking-tight font-display">El Nathan</h1>
             </div>
             <p className="text-xs font-medium text-slate-500 tracking-wider uppercase">Painel de Controle</p>
           </div>
@@ -663,7 +679,7 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
         <div className="hidden">
           <div className="flex items-center gap-3 text-white mb-2">
             <Truck className="w-8 h-8 text-indigo-400" />
-            <h1 className="text-xl font-bold tracking-tight font-display">El Nathan</h1>
+            <h1 className="text-lg md:text-xl font-bold tracking-tight font-display">El Nathan</h1>
           </div>
           <p className="text-xs font-medium text-slate-500 tracking-wider uppercase">Painel de Controle</p>
         </div>
@@ -687,6 +703,12 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
             icon={<FileArchive size={20} />} 
             label="Lista de OS" 
             onClick={() => { setActiveTab('OS_LIST'); setMobileMenuOpen(false); }} 
+          />
+          <SidebarButton 
+            active={activeTab === 'FINANCE'} 
+            icon={<CircleDollarSign size={20} />} 
+            label="Controle Financeiro" 
+            onClick={() => { setActiveTab('FINANCE'); setMobileMenuOpen(false); }} 
           />
           
 
@@ -713,10 +735,10 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
         </nav>
         
         {onLogout && (
-          <div className="p-4 mt-auto">
+          <div className="p-2 md:p-4 mt-auto">
             <button
               onClick={onLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-red-400"
+              className="w-full flex items-center gap-3 px-3 py-2 md:px-4 md:py-3 rounded-xl transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-red-400"
             >
               <LogOut size={20} />
               <span>Sair do Sistema</span>
@@ -728,31 +750,31 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 bg-slate-50 print:hidden h-full overflow-hidden">
         {/* Mobile Header */}
-        <div className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-30 shrink-0">
+        <div className="md:hidden bg-white border-b border-slate-200 px-3 py-2 md:px-4 md:py-3 flex items-center justify-between z-30 shrink-0">
           <div className="flex items-center gap-2">
             <Truck className="w-6 h-6 text-indigo-600" />
-            <h1 className="text-lg font-bold font-display text-slate-900">El Nathan</h1>
+            <h1 className="text-base md:text-lg font-bold font-display text-slate-900">El Nathan</h1>
           </div>
           <button onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 text-slate-500 hover:text-slate-900 focus:outline-none">
             <Menu size={24} />
           </button>
         </div>
         
-        <div className={`flex-1 overflow-y-auto ${activeTab === 'OS_CREATE' ? 'p-0' : 'p-4 md:p-8'}`}>
+        <div className={`flex-1 overflow-y-auto ${activeTab === 'OS_CREATE' ? 'p-0' : 'p-3 md:p-8'}`}>
         
         {activeTab === 'DASHBOARD' && (
           <div className="max-w-6xl mx-auto animate-in fade-in duration-300">
-            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="mb-3 md:mb-4 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-1.5 md:gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">Visão Geral Financeira</h2>
+                <h2 className="text-xl md:text-xl md:text-2xl font-bold text-slate-900">Visão Geral Financeira</h2>
                 <p className="text-slate-500">Resumo de custos e fretes do período (Mensal)</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-600">Filtrar por OS:</span>
+                <span className="text-xs md:text-sm font-semibold text-slate-600">Filtrar por OS:</span>
                 <select 
                   value={dashboardOsFilter}
                   onChange={(e) => setDashboardOsFilter(e.target.value)}
-                  className="w-48 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-700 shadow-sm"
+                  className="w-48 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs md:text-sm text-slate-700 shadow-sm"
                 >
                   <option value="">Todas as OSs (Geral)</option>
                   {orders.map(os => (
@@ -763,54 +785,54 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
             </div>
 
             {/* Metric Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-2 md:gap-6 mb-3 md:mb-4 md:mb-8">
               <div 
-                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition-all group"
+                className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition-all group"
                 onClick={() => { setActiveTab('OS_LIST'); setMobileMenuOpen(false); }}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5 md:gap-4">
                   <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
                     <FileText size={24} />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-500 group-hover:text-indigo-600 transition-colors">
+                    <p className="text-xs md:text-sm font-medium text-slate-500 group-hover:text-indigo-600 transition-colors">
                       Total de OSs 
                       <span className="text-indigo-500 ml-1 opacity-100 transition-opacity text-xs whitespace-nowrap">&rarr;</span>
                     </p>
-                    <p className="text-3xl font-bold text-slate-900">{dashboardOrders.length}</p>
+                    <p className="text-2xl md:text-3xl font-bold text-slate-900">{dashboardOrders.length}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-4">
+              <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-1.5 md:gap-4">
                   <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
                     <CreditCard size={24} />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-500">Faturamento Bruto</p>
-                    <p className="text-3xl font-bold text-slate-900">{formatBRL(totalGross)}</p>
+                    <p className="text-xs md:text-sm font-medium text-slate-500">Faturamento Bruto</p>
+                    <p className="text-2xl md:text-3xl font-bold text-slate-900">{formatBRL(totalGross)}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-4">
+              <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-1.5 md:gap-4">
                   <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
                     <Route size={24} />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-500">Custos (Combustível + Pedágio)</p>
-                    <p className="text-3xl font-bold text-slate-900">{formatBRL(totalCosts)}</p>
+                    <p className="text-xs md:text-sm font-medium text-slate-500">Custos (Combustível + Pedágio)</p>
+                    <p className="text-2xl md:text-3xl font-bold text-slate-900">{formatBRL(totalCosts)}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Faturamento por Data</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-2 md:gap-6 mb-3 md:mb-4 md:mb-8">
+              <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 border border-slate-200 shadow-sm">
+                <h3 className="text-base md:text-lg font-semibold text-slate-900 mb-3 md:mb-4">Faturamento por Data</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={barChartData}>
@@ -824,8 +846,8 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Status das Ordens de Serviço</h3>
+              <div className="bg-white rounded-lg md:rounded-2xl p-3 md:p-6 border border-slate-200 shadow-sm">
+                <h3 className="text-base md:text-lg font-semibold text-slate-900 mb-3 md:mb-4">Status das Ordens de Serviço</h3>
                 <div className="h-64 flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -847,7 +869,7 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                     {osStatusData.map((entry, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                        <span className="text-sm text-slate-600">{entry.name} ({entry.value})</span>
+                        <span className="text-xs md:text-sm text-slate-600">{entry.name} ({entry.value})</span>
                       </div>
                     ))}
                   </div>
@@ -856,124 +878,112 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
             </div>
 
             {/* Drivers Payment Table */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="px-6 py-5 border-b border-slate-200 bg-slate-50/50">
-                <h3 className="text-lg font-semibold text-slate-900">Fechamento por Motorista</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
-                      <th className="px-6 py-4 font-medium">Motorista</th>
-                      <th className="px-6 py-4 font-medium">Placa</th>
-                      <th className="px-6 py-4 font-medium">Dados de Pagamento</th>
-                      <th className="px-6 py-4 font-medium text-right">Líquido a Receber</th>
-                      <th className="px-6 py-4 font-medium text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {drivers.map(driver => {
-                      // Find orders for driver to calculate total net value
-                      const driverOrders = orders.filter(o => o.driverId === driver.id);
-                      const totalNet = driverOrders.reduce((acc, os) => acc + os.netValue, 0);
+                        <div className="mb-6">
+              <h3 className="text-base md:text-lg font-semibold text-slate-900 mb-4 px-1">Fechamento por Motorista</h3>
+              <div className="space-y-3">
+                {drivers.map(driver => {
+                  const driverOrders = orders.filter(o => o.driverId === driver.id);
+                  const totalNet = driverOrders.reduce((acc, os) => acc + os.netValue, 0);
 
-                      return (
-                        <tr 
-                          key={driver.id} 
-                          className="hover:bg-indigo-50/50 transition-colors cursor-pointer group"
-                          onClick={() => {
+                  return (
+                    <ExpandableCard
+                      key={driver.id}
+                      id={'dash_driver_' + driver.id!}
+                      isExpanded={!!expandedDriverIds['dash_driver_' + driver.id!]}
+                      onToggle={(id) => setExpandedDriverIds(prev => ({ ...prev, [id]: !prev[id] }))}
+                      header={
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-indigo-100 text-indigo-700 rounded-full hidden md:flex items-center justify-center font-bold text-lg">
+                              {driver.name.charAt(0)}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-bold text-slate-900 text-sm md:text-lg">{driver.name}</span>
+                              <span className="text-xs text-slate-500">{driver.vehiclePlateHorse}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <span className="font-bold text-emerald-600 block text-sm md:text-base">{formatBRL(totalNet)}</span>
+                              <span className="text-[10px] md:text-xs text-slate-500 hidden md:block">Líquido a Receber</span>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Documento (CPF)</p>
+                          <p className="font-medium text-slate-900 text-sm">{driver.cpf || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1 md:col-span-2">
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Dados Bancários / PIX</p>
+                          <div className="text-sm font-medium text-slate-900">
+                            PIX: {driver.pixKey} ({driver.pixKeyType})
+                          </div>
+                          <div className="text-xs text-slate-600">
+                            {driver.bank} - Agência: {driver.agency} - Conta: {driver.account}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation();
                             setSelectedDriverId(driver.id);
+                            // Se tiver state financeDriverId, usa
                             setActiveTab('DRIVER_DETAIL');
                           }}
+                          className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
                         >
-                          <td className="px-6 py-4">
-                            <div className="font-medium text-slate-900 group-hover:text-indigo-700 transition-colors">{driver.name}</div>
-                            <div className="text-sm text-slate-500">CPF: {driver.cpf}</div>
-                          </td>
-                          <td className="px-6 py-4 text-slate-700 font-medium">
-                            {driver.vehiclePlateHorse}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="text-sm text-slate-900">
-                              <span className="font-medium">PIX:</span> {driver.pixKey} ({driver.pixKeyType})
-                            </div>
-                            <div className="text-xs text-slate-500 mt-0.5">
-                              {driver.bank} - Ag: {driver.agency} - Cc: {driver.account}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-sm">
-                              {formatBRL(totalNet)}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex justify-end gap-2">
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedDriverId(driver.id);
-                                  setActiveTab('DRIVER_DETAIL');
-                                }}
-                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                title="Editar Motorista"
-                              >
-                                <Edit size={18} />
-                              </button>
-                              <button 
-                                onClick={async (e) => {
-                                  e.stopPropagation();
-                                  setConfirmModal({
-                                    title: 'Excluir Motorista',
-                                    message: 'Tem certeza que deseja excluir este motorista? Esta ação é irreversível.',
-                                    onConfirm: async () => {
-                                      try {
-                                        await deleteDoc(doc(db, 'drivers', driver.id));
-                                        toast.success("Motorista excluído");
-                                      } catch (error) {
-                                        console.error("Erro ao excluir", error);
-                                        toast.error("Erro ao excluir motorista");
-                                      }
-                                      setConfirmModal(null);
-                                    }
-                                  });
-                                }}
-                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                title="Excluir Motorista"
-                              >
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
+                          <CreditCard size={18} /> Acerto Financeiro
+                        </button>
+                        <div className="w-full md:w-auto flex-1 md:ml-auto flex gap-2">
+                          <button
+                            onClick={(e) => { 
+                              e.stopPropagation();
+                              setSelectedDriverId(driver.id);
+                              setActiveTab('DRIVER_DETAIL');
+                            }}
+                            className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+                          >
+                            <UserPlus size={18} /> Perfil Completo
+                          </button>
+                        </div>
+                      </div>
+                    </ExpandableCard>
+                  );
+                })}
               </div>
             </div>
           </div>
         )}
 
+
+        {activeTab === 'FINANCE' && (
+          <FinancePanel orders={orders} />
+        )}
         {activeTab === 'MAP' && (
           <div className="h-full flex flex-col animate-in fade-in duration-300">
-            <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4 md:px-0">
+            <div className="mb-3 md:mb-4 md:mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-1.5 md:gap-4 px-4 md:px-0">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">Monitoramento da Frota</h2>
+                <h2 className="text-xl md:text-xl md:text-2xl font-bold text-slate-900">Monitoramento da Frota</h2>
                 <p className="text-slate-500">Posição em tempo real dos veículos (OpenStreetMap via Leaflet)</p>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-1.5 md:gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  <span className="text-sm text-slate-600 font-medium">Em Trânsito</span>
+                  <span className="text-xs md:text-sm text-slate-600 font-medium">Em Trânsito</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-sm text-slate-600 font-medium">Parado</span>
+                  <span className="text-xs md:text-sm text-slate-600 font-medium">Parado</span>
                 </div>
               </div>
             </div>
             
-            <div className="flex-1 rounded-2xl overflow-hidden shadow-sm border border-slate-200">
+            <div className="flex-1 rounded-lg md:rounded-2xl overflow-hidden shadow-sm border border-slate-200">
               <FleetMap drivers={drivers.filter(d => orders.some(o => o.driverId === d.id && (o.status === 'IN_TRANSIT' || o.status === 'APPROVED')))} />
             </div>
           </div>
@@ -985,24 +995,24 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
             <div className="md:hidden flex bg-white border-b border-slate-200 shrink-0">
               <button 
                 onClick={() => setShowMapMobile(false)}
-                className={`flex-1 py-3 text-sm font-bold text-center border-b-2 ${!showMapMobile ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'}`}
+                className={`flex-1 py-3 text-sm md:text-base font-bold text-center border-b-2 ${!showMapMobile ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'}`}
               >
                 Formulário
               </button>
               <button 
                 onClick={() => setShowMapMobile(true)}
-                className={`flex-1 py-3 text-sm font-bold text-center border-b-2 ${showMapMobile ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'}`}
+                className={`flex-1 py-3 text-sm md:text-base font-bold text-center border-b-2 ${showMapMobile ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500'}`}
               >
                 Visualizar Mapa
               </button>
             </div>
 
             {/* Left Sidebar Form (Qualp Clone) */}
-            <div className={`${showMapMobile ? 'hidden md:flex' : 'flex'} w-full md:w-[450px] bg-white h-full overflow-y-auto border-r border-slate-200 shadow-2xl z-10 flex-col p-4 md:p-6 shrink-0`}>
-              <div className="mb-6 border-b border-slate-100 pb-4 flex justify-between items-start">
+            <div className={`${showMapMobile ? 'hidden md:flex' : 'flex'} w-full md:w-[450px] bg-white h-full overflow-y-auto border-r border-slate-200 shadow-2xl z-10 flex-col p-3 md:p-6 shrink-0`}>
+              <div className="mb-3 md:mb-4 md:mb-6 border-b border-slate-100 pb-4 flex justify-between items-start">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Emissão de OS</h2>
-                  <p className="text-slate-500 text-sm">Simulador de Rotas</p>
+                  <h2 className="text-xl md:text-xl md:text-2xl font-bold text-slate-900">Emissão de OS</h2>
+                  <p className="text-slate-500 text-xs md:text-sm">Simulador de Rotas</p>
                 </div>
                 <button
                   onClick={(e) => { e.preventDefault(); setActiveTab('PRICING_TABLE'); }}
@@ -1012,8 +1022,8 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                   <CircleDollarSign size={20} />
                 </button>
               </div>
-              <div className="bg-indigo-50 p-4 rounded-xl mb-4 border border-indigo-100 shadow-sm">
-                <label className="block text-sm font-bold text-indigo-900 mb-2">Carregar OS do Cliente (Nº)</label>
+              <div className="bg-indigo-50 p-2 md:p-4 rounded-xl mb-3 md:mb-4 border border-indigo-100 shadow-sm">
+                <label className="block text-sm md:text-base font-bold text-indigo-900 mb-2">Carregar OS do Cliente (Nº)</label>
                 <div className="flex gap-2">
                   <input 
                     type="text" 
@@ -1054,7 +1064,7 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                         toast.error('OS não encontrada. Verifique o número.');
                       }
                     }}
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700"
+                    className="bg-indigo-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium hover:bg-indigo-700"
                   >
                     Buscar
                   </button>
@@ -1067,7 +1077,7 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                 )}
               </div>
               <form 
-                className="space-y-6 pb-24 md:pb-0"
+                className="space-y-3 md:space-y-6 pb-24 md:pb-0"
                 onChange={(e) => {
                   const form = e.currentTarget;
                   const distanceEl = form.elements.namedItem('distance') as HTMLInputElement | null;
@@ -1211,12 +1221,12 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                 }}
               >
                 {/* 1. SELEÇÃO DE MOTORISTA E VEÍCULO */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-slate-900 border-b pb-2">Seleção de Motorista e Veículo</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3 md:space-y-4">
+                  <h3 className="text-base md:text-lg font-semibold text-slate-900 border-b pb-2">Seleção de Motorista e Veículo</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Motorista</label>
-                      <select name="driverId" required className="w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
+                      <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Motorista</label>
+                      <select name="driverId" required className="w-full rounded-lg border border-slate-300 px-3 py-1.5 md:px-4 md:py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
                         <option value="">Selecione...</option>
                         {drivers.map(d => {
                           const isBlocked = d.operationalStatus === 'BLOCKED_COMPLIANCE' || d.lockedBalance! > 0;
@@ -1229,8 +1239,8 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1">Tipo de Veículo</label>
-                      <select name="vehicleType" className="w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
+                      <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Tipo de Veículo</label>
+                      <select name="vehicleType" className="w-full rounded-lg border border-slate-300 px-3 py-1.5 md:px-4 md:py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
                         <option value="">Automático (Pelo Motorista)</option>
                         <option value="PASSEIO">PASSEIO</option>
                         <option value="FIORINO">FIORINO</option>
@@ -1245,10 +1255,10 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                 </div>
 
                 {/* 2. ROTA */}
-                <div className="space-y-4 pt-4">
-                  <h3 className="text-lg font-semibold text-slate-900 border-b pb-2">Rota, Custo e Frete</h3>
+                <div className="space-y-3 md:space-y-4 pt-4">
+                  <h3 className="text-base md:text-lg font-semibold text-slate-900 border-b pb-2">Rota, Custo e Frete</h3>
                   
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <div className="bg-slate-50 p-2 md:p-4 rounded-xl border border-slate-200">
                     <div className="space-y-3">
                                             <div>
                         <div className="flex justify-between items-center mb-1">
@@ -1321,14 +1331,14 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4 mt-2">
+                      <div className="grid grid-cols-2 gap-1.5 md:gap-4 mt-2">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Consumo (Km/L)</label>
-                          <input name="kmL" type="number" step="0.01" value={routeParams.kmL} onChange={(e) => setRouteParams(p => ({ ...p, kmL: parseFloat(e.target.value) || 0 }))} className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                          <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Consumo (Km/L)</label>
+                          <input name="kmL" type="number" step="0.01" value={routeParams.kmL} onChange={(e) => setRouteParams(p => ({ ...p, kmL: parseFloat(e.target.value) || 0 }))} className="w-full rounded-lg border border-slate-300 px-3 py-1.5 md:px-4 md:py-2 focus:ring-2 focus:ring-indigo-500 outline-none" />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Preço (Km/L)</label>
-                          <input name="dieselPrice" type="number" step="0.01" value={routeParams.dieselPrice} onChange={(e) => setRouteParams(p => ({ ...p, dieselPrice: parseFloat(e.target.value) || 0 }))} className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                          <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Preço (Km/L)</label>
+                          <input name="dieselPrice" type="number" step="0.01" value={routeParams.dieselPrice} onChange={(e) => setRouteParams(p => ({ ...p, dieselPrice: parseFloat(e.target.value) || 0 }))} className="w-full rounded-lg border border-slate-300 px-3 py-1.5 md:px-4 md:py-2 focus:ring-2 focus:ring-indigo-500 outline-none" />
                         </div>
                       </div>
 
@@ -1339,7 +1349,7 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                           onChange={(e) => setRouteParams(p => ({ ...p, isRoundTrip: e.target.checked }))}
                           className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
                         />
-                        <span className="text-sm font-medium text-slate-700">Ida e Volta</span>
+                        <span className="text-xs md:text-sm font-medium text-slate-700">Ida e Volta</span>
                       </label>
 
                       <button 
@@ -1356,7 +1366,7 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                             toast.error('Preencha Origem e Destino para calcular a rota.');
                           }
                         }}
-                        className="w-full bg-black text-white font-bold text-lg rounded-lg py-3 mt-2 uppercase tracking-wide hover:bg-gray-900 transition-colors"
+                        className="w-full bg-black text-white font-bold text-base md:text-lg rounded-lg py-3 mt-2 uppercase tracking-wide hover:bg-gray-900 transition-colors"
                       >
                         Calcular Rota
                       </button>
@@ -1365,63 +1375,63 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                 </div>
 
                 {/* 3. RESULTADOS E TOTAIS */}
-                <div className="space-y-4 pt-4">
-                  <h3 className="text-lg font-semibold text-slate-900 border-b pb-2">Valores</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3 md:space-y-4 pt-4">
+                  <h3 className="text-base md:text-lg font-semibold text-slate-900 border-b pb-2">Valores</h3>
+                  <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Distância (Km)</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Distância (Km)</label>
                       <input name="distance" value={osFormState.distance || ''} onChange={(e) => setOsFormState(prev => ({ ...prev, distance: parseFloat(e.target.value) || 0 }))} type="number" step="0.1" placeholder="0" className="w-full bg-slate-100 rounded border border-slate-300 px-3 py-2 text-slate-900 focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Pedágio p/ Eixo (R$)</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Pedágio p/ Eixo (R$)</label>
                       <input name="tollPerAxle" value={osFormState.tollPerAxle || ''} onChange={(e) => setOsFormState(prev => ({ ...prev, tollPerAxle: parseFloat(e.target.value) || 0 }))} type="number" step="0.01" placeholder="0.00" className="w-full bg-slate-100 rounded border border-slate-300 px-3 py-2 text-slate-900 focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Qtd. Eixos</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Qtd. Eixos</label>
                       <input name="axles" value={osFormState.axles || ''} onChange={(e) => setOsFormState(prev => ({ ...prev, axles: parseInt(e.target.value) || 1 }))} type="number" min="1" step="1" placeholder="1" className="w-full bg-white rounded border border-slate-300 px-3 py-2 text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Total Pedágio (R$)</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Total Pedágio (R$)</label>
                       <input name="tollTotal" type="number" step="0.01" readOnly value={(osFormState.axles * osFormState.tollPerAxle).toFixed(2)} className="w-full bg-slate-100 rounded border border-slate-300 px-3 py-2 text-slate-500 cursor-not-allowed focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Peso Estimado (Kg)</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Peso Estimado (Kg)</label>
                       <input name="estimatedWeight" type="text" placeholder="Ex: 1500" className="w-full bg-white rounded border border-slate-300 px-3 py-2 text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Volumetria (M³)</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Volumetria (M³)</label>
                       <input name="cargoVolume" type="text" placeholder="Ex: 12" className="w-full bg-white rounded border border-slate-300 px-3 py-2 text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Outras Despesas (R$)</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Outras Despesas (R$)</label>
                       <input name="otherExpenses" value={osFormState.otherExpenses || ''} onChange={(e) => setOsFormState(prev => ({ ...prev, otherExpenses: parseFloat(e.target.value) || 0 }))} type="number" step="0.01" placeholder="0.00" className="w-full bg-white rounded border border-slate-300 px-3 py-2 text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-700 mb-1">Valor do Frete Bruto (R$)</label>
+                      <label className="block text-xs md:text-sm font-medium text-emerald-700 mb-1">Valor do Frete Bruto (R$)</label>
                       <input name="freightValue" type="number" step="0.01" readOnly value={osFreightValue > 0 ? osFreightValue.toFixed(2) : ''} placeholder="0.00" className="w-full bg-emerald-50 rounded border border-emerald-200 px-3 py-2 text-emerald-900 focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-rose-700 mb-1">Comissão Transportadora (15%)</label>
+                      <label className="block text-xs md:text-sm font-medium text-rose-700 mb-1">Comissão Transportadora (15%)</label>
                       <input name="carrierCommission" type="number" step="0.01" readOnly value={osFreightValue > 0 ? (osFreightValue * 0.15).toFixed(2) : ''} placeholder="0.00" className="w-full bg-rose-50 rounded border border-rose-200 px-3 py-2 text-rose-900 focus:outline-none cursor-not-allowed" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-700 mb-1">Pagar ao Motorista (R$)</label>
+                      <label className="block text-xs md:text-sm font-medium text-emerald-700 mb-1">Pagar ao Motorista (R$)</label>
                       <input name="driverPayment" type="number" step="0.01" readOnly value={osFreightValue > 0 ? (osFreightValue * 0.85).toFixed(2) : ''} placeholder="0.00" className="w-full bg-emerald-100 rounded border border-emerald-300 px-3 py-2 text-emerald-900 font-bold focus:outline-none cursor-not-allowed" />
                     </div>
                     <div className="col-span-2 md:col-span-1">
-                      <label className="block text-sm font-medium text-slate-600 mb-1">Data e Hora da OS</label>
+                      <label className="block text-xs md:text-sm font-medium text-slate-600 mb-1">Data e Hora da OS</label>
                       <input name="createdAt" type="datetime-local" defaultValue={getLocalDatetimeForInput(new Date().toISOString())} className="w-full bg-white rounded border border-slate-300 px-3 py-2 text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none" />
                     </div>
                   </div>
                   
-                  <div className="bg-emerald-100 border border-emerald-300 p-4 rounded-xl flex items-center justify-between mt-2">
+                  <div className="bg-emerald-100 border border-emerald-300 p-2 md:p-4 rounded-xl flex items-center justify-between mt-2">
                     <span className="font-bold text-emerald-800">Frete Total da OS</span>
-                    <span className="font-bold text-2xl text-emerald-900">R$ {(osTotalValue > 0 ? osTotalValue : 0).toFixed(2).replace('.', ',')}</span>
+                    <span className="font-bold text-xl md:text-2xl text-emerald-900">R$ {(osTotalValue > 0 ? osTotalValue : 0).toFixed(2).replace('.', ',')}</span>
                   </div>
                 </div>
 
-                <div className="pt-6 flex items-center justify-end gap-4">
-                  <button type="reset" className="px-6 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-lg transition-colors">
+                <div className="pt-6 flex items-center justify-end gap-1.5 md:gap-4">
+                  <button type="reset" className="px-3 md:px-6 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-lg transition-colors">
                     Limpar
                   </button>
                   <button type="submit" className="bg-indigo-600 text-white px-8 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
@@ -1442,39 +1452,39 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
 
               {routeCalculated && osFormState.distance > 0 && (
                 <div className="absolute bottom-4 right-4 z-[400] bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl w-80 overflow-hidden flex flex-col border border-slate-200 pointer-events-auto animate-in slide-in-from-bottom-4 duration-300">
-                  <div className="bg-slate-50 p-4 border-b border-slate-200 text-center relative">
-                    <h4 className="text-slate-900 font-bold uppercase tracking-widest text-sm mb-1">Rota 1</h4>
-                    <p className="text-xl font-bold text-slate-800">{osFormState.distance} KM</p>
-                    <p className="text-[#ff3b00] font-bold text-lg">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(osTotalValue)}</p>
+                  <div className="bg-slate-50 p-2 md:p-4 border-b border-slate-200 text-center relative">
+                    <h4 className="text-slate-900 font-bold uppercase tracking-widest text-xs md:text-sm mb-1">Rota 1</h4>
+                    <p className="text-lg md:text-xl font-bold text-slate-800">{osFormState.distance} KM</p>
+                    <p className="text-[#ff3b00] font-bold text-base md:text-lg">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(osTotalValue)}</p>
                   </div>
-                  <div className="p-4 space-y-3">
-                    <div className="flex justify-between items-center text-sm">
+                  <div className="p-2 md:p-4 space-y-3">
+                    <div className="flex justify-between items-center text-xs md:text-sm">
                       <span className="text-slate-600 font-semibold">Tipo de veículo</span>
                       <span className="text-slate-900 font-bold">{currentVehicleType || 'Não selecionado'}</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-xs md:text-sm">
                       <span className="text-slate-600 font-semibold">Duração</span>
                       <span className="text-slate-900 font-bold">{Math.floor(osFormState.duration / 3600)} h {Math.floor((osFormState.duration % 3600) / 60)} m</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-xs md:text-sm">
                       <span className="text-slate-600 font-semibold">Distância</span>
                       <span className="text-slate-900 font-bold">{osFormState.distance} km</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-xs md:text-sm">
                       <span className="text-slate-600 font-semibold">Pedágio</span>
                       <span className="text-slate-900 font-bold">R$ {osTollValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-xs md:text-sm">
                       <span className="text-slate-600 font-semibold">Pedágio por eixo</span>
                       <span className="text-slate-900 font-bold">R$ {(osFormState.tollPerAxle).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-xs md:text-sm">
                       <span className="text-slate-600 font-semibold">Combustível</span>
                       <span className="text-slate-900 font-bold">R$ {(routeParams.kmL > 0 ? (osFormState.distance / routeParams.kmL) * routeParams.dieselPrice : 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="pt-3 mt-3 border-t border-slate-200 flex justify-between items-center bg-slate-50 -mx-4 -mb-4 p-4">
+                    <div className="pt-3 mt-3 border-t border-slate-200 flex justify-between items-center bg-slate-50 -mx-4 -mb-3 md:mb-4 p-2 md:p-4">
                       <span className="text-slate-800 font-bold">Custo Total</span>
-                      <span className="text-slate-900 font-black text-lg">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(osTotalValue)}</span>
+                      <span className="text-slate-900 font-black text-base md:text-lg">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(osTotalValue)}</span>
                     </div>
                   </div>
                 </div>
@@ -1484,53 +1494,44 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
         )}
 
         {activeTab === 'OS_LIST' && (
-          <div className="max-w-6xl mx-auto animate-in fade-in duration-300">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-slate-900">Todas as Ordens de Serviço</h2>
-              <p className="text-slate-500">Gestão e controle financeiro de todas as OSs emitidas.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Total de OS Emitidas</p>
-                <p className="text-4xl font-black text-indigo-600">{orders.length}</p>
+          <div className="p-3 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-300">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 md:mb-8">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-black font-display text-slate-900 tracking-tight">Ordens de Serviço</h2>
+                <p className="text-slate-500 mt-2 font-medium">Histórico e acompanhamento de OS.</p>
               </div>
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Total Bruto Cotações</p>
-                <p className="text-3xl font-black font-display text-emerald-600">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                    orders.reduce((sum, os) => sum + (os.grossValue || 0), 0)
-                  )}
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-2xl border border-rose-200 shadow-sm flex flex-col justify-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10">
-                  <CircleDollarSign size={64} />
-                </div>
-                <p className="text-sm font-bold text-rose-600 uppercase tracking-wider mb-2 z-10">Pagar aos Motoristas</p>
-                <p className="text-3xl font-black font-display text-rose-700 z-10">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                    orders.reduce((sum, os) => sum + (os.netValue || 0), 0)
-                  )}
-                </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors flex items-center gap-2"
+                >
+                  <FileText size={18} /> <span className="hidden md:inline">Relatório PDF</span>
+                </button>
+                <button 
+                  onClick={() => {
+                    
+                    setEditingOs(null);
+                    setActiveTab('OS_CREATE');
+                  }}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm"
+                >
+                  <Plus size={18} /> Nova OS
+                </button>
               </div>
             </div>
 
-            <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-              <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto ml-auto">
-                <button
-                  onClick={exportToCSV}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg font-medium transition-colors border border-indigo-200"
-                >
-                  <Download size={18} />
-                  Exportar CSV
-                </button>
+            <div className="bg-white p-3 md:p-4 rounded-lg md:rounded-2xl border border-slate-200 mb-6 shadow-sm">
+              <div className="flex flex-col md:flex-row items-center gap-4">
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                  <Filter size={18} className="text-slate-400" />
+                  <span className="text-sm font-semibold text-slate-700">Filtros</span>
+                </div>
                 
-                <div className="flex flex-col md:flex-row gap-2 w-full">
+                <div className="flex-1 flex flex-col md:flex-row gap-3 w-full">
                   <select 
                     value={osStatusFilter}
                     onChange={(e) => setOsStatusFilter(e.target.value)}
-                    className="w-full md:w-36 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-700"
+                    className="w-full md:w-40 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs md:text-sm text-slate-700"
                   >
                     <option value="">Status</option>
                     <option value="PENDING_APPROVAL">Pendente</option>
@@ -1543,13 +1544,13 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                     type="date"
                     value={osDateFrom}
                     onChange={(e) => setOsDateFrom(e.target.value)}
-                    className="w-full md:w-36 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-700"
+                    className="w-full md:w-36 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs md:text-sm text-slate-700"
                   />
                   <input 
                     type="date"
                     value={osDateTo}
                     onChange={(e) => setOsDateTo(e.target.value)}
-                    className="w-full md:w-36 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-700"
+                    className="w-full md:w-36 py-2 px-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs md:text-sm text-slate-700"
                   />
                   <div className="relative w-full md:w-64">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -1558,117 +1559,126 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
                       placeholder="Nº OS ou Placa..."
                       value={osSearch}
                       onChange={(e) => setOsSearch(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                      className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs md:text-sm"
                     />
                   </div>
                 </div>
-
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
-                      <th className="px-6 py-4 font-medium">OS / Data</th>
-                      <th className="px-6 py-4 font-medium">Status</th>
-                      <th className="px-6 py-4 font-medium">Motorista</th>
-                      <th className="px-6 py-4 font-medium">Origem ➝ Destino</th>
-                      <th className="px-6 py-4 font-medium text-right">Líquido Motorista</th>
-                      <th className="px-6 py-4 font-medium text-center">Pagamentos</th>
-                      <th className="px-6 py-4 font-medium text-center">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredOS.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                          Nenhuma ordem de serviço encontrada.
-                        </td>
-                      </tr>
-                    ) : filteredOS.filter(os => {
-                      const s = osSearch.toLowerCase();
-                      return os.number.includes(s) || 
-                             (os.driverName || '').toLowerCase().includes(s) || 
-                             os.status.toLowerCase().includes(s);
-                    }).map(os => (
-                      <tr key={os.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-slate-900">#{os.number}</div>
-                          <div className="text-xs text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`text-xs font-semibold rounded-full px-3 py-1 ${
-                            os.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
-                            os.status === 'IN_TRANSIT' ? 'bg-indigo-100 text-indigo-700' : 
-                            os.status === 'APPROVED' ? 'bg-purple-100 text-purple-700' : os.status === 'CANCELLED' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
-                          }`}>
-                            {os.status === 'COMPLETED' ? 'Concluída' : 
-                             os.status === 'IN_TRANSIT' ? 'Em Trânsito' : 
-                             os.status === 'APPROVED' ? 'Aprovado' : os.status === 'CANCELLED' ? 'Cancelada' : 'Pendente'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-slate-900">{os.driverName || 'Desconhecido'}</div>
-                          <div className="text-xs text-slate-500">{os.vehicleType || '-'}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-slate-900">{os.origin}</div>
-                          <div className="text-xs text-slate-500">➝ {os.destinations?.join('; ') || 'N/A'}</div>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="font-bold text-indigo-600">{formatBRL(os.netValue)}</div>
-                          <div className="text-xs text-slate-500">Total: {formatBRL((os as any).totalValue || (os.grossValue || 0) + (os.tollCost || 0) + (os.otherExpenses || 0))}</div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col gap-1 items-center">
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${os.paymentStatusClient === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                              Cliente: {os.paymentStatusClient === 'PAID' ? 'Recebido' : 'Pendente'}
-                            </span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${os.paymentStatusDriver === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                              Motorista: {os.paymentStatusDriver === 'PAID' ? 'Pago' : 'Pendente'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              onClick={() => setPrintOs(os)}
-                              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                              title="Salvar em PDF"
-                            >
-                              <FileText size={18} />
-                            </button>
-                            <button
-                              onClick={() => sendOsWhatsApp(os)}
-                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                              title="Compartilhar"
-                            >
-                              <MessageCircle size={18} />
-                            </button>
+            <div className="space-y-3">
+              {filteredOS.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 bg-white rounded-xl border border-slate-200">
+                  Nenhuma ordem de serviço encontrada.
+                </div>
+              ) : filteredOS.filter(os => {
+                const s = osSearch.toLowerCase();
+                return os.number.includes(s) || 
+                       (os.driverName || '').toLowerCase().includes(s) || 
+                       os.status.toLowerCase().includes(s);
+              }).map(os => (
+                <ExpandableCard
+                  key={os.id}
+                  id={os.id!}
+                  isExpanded={!!expandedOsIds[os.id!]}
+                  onToggle={toggleOsExpanded}
+                  header={
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 md:gap-4">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-slate-900 text-sm md:text-base">#{os.number}</span>
+                          <span className="text-xs text-slate-500 hidden md:inline">{new Date(os.createdAt).toLocaleDateString('pt-BR')} - {new Date(os.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <div className="hidden md:flex flex-col border-l border-slate-200 pl-4">
+                            <span className="text-sm font-semibold text-slate-800">{os.clientName || 'Cliente Indefinido'}</span>
+                            <span className="text-xs text-slate-500">Mot: {os.driverName || 'Sem motorista'}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <span className="font-bold text-indigo-600 block text-sm md:text-base">{formatBRL(os.netValue)}</span>
+                          <span className="text-[10px] md:text-xs text-slate-500 hidden md:block">Total Bruto: {formatBRL((os as any).totalValue || (os.grossValue || 0) + (os.tollCost || 0) + (os.otherExpenses || 0))}</span>
+                        </div>
+                        <span className={`text-[10px] md:text-xs font-semibold rounded-full px-2 py-1 md:px-3 ${
+                          os.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
+                          os.status === 'IN_TRANSIT' ? 'bg-indigo-100 text-indigo-700' : 
+                          os.status === 'APPROVED' ? 'bg-purple-100 text-purple-700' : os.status === 'CANCELLED' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {os.status === 'COMPLETED' ? 'Concluída' : 
+                           os.status === 'IN_TRANSIT' ? 'Em Trânsito' : 
+                           os.status === 'APPROVED' ? 'Aprovado' : os.status === 'CANCELLED' ? 'Cancelada' : 'Pendente'}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Cliente / Motorista</p>
+                      <p className="font-medium text-slate-900">{os.clientName || 'N/A'}</p>
+                      <p className="text-sm text-slate-600">{os.driverName || 'Sem motorista'} <span className="text-xs text-slate-400">({os.vehicleType || '-'})</span></p>
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Rota</p>
+                      <div className="flex flex-col gap-1 text-sm">
+                        <div className="flex gap-2"><span className="text-emerald-500 font-bold">A</span><span className="text-slate-700">{os.origin}</span></div>
+                        <div className="flex gap-2"><span className="text-indigo-500 font-bold">B</span><span className="text-slate-700">{os.destinations?.join('; ') || 'N/A'}</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 p-3 bg-white rounded-lg border border-slate-200">
+                    <div>
+                      <p className="text-xs text-slate-500">KM Total / Peso</p>
+                      <p className="font-semibold text-slate-900">{os.kmTotal} km / {os.weight} kg</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Líquido Motorista</p>
+                      <p className="font-semibold text-indigo-600">{formatBRL(os.netValue)}</p>
+                    </div>
+                    <div className="col-span-2 md:col-span-2">
+                      <p className="text-xs text-slate-500 mb-1">Status de Pagamentos</p>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${os.paymentStatusClient === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                          Cliente: {os.paymentStatusClient === 'PAID' ? 'Recebido' : 'Pendente'}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${os.paymentStatusDriver === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                          Motorista: {os.paymentStatusDriver === 'PAID' ? 'Pago' : 'Pendente'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-                            <button
-                              onClick={() => setEditingOs(os)}
-                              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                              title="Editar OS"
-                            >
-                              <Edit size={18} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteOs(os.id!)}
-                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Excluir Definitivamente"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setPrintOs(os); }}
+                      className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
+                    >
+                      <FileText size={18} /> <span className="hidden md:inline">Salvar em PDF</span><span className="md:hidden">PDF</span>
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); sendOsWhatsApp(os); }}
+                      className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg font-medium hover:bg-emerald-100 transition-colors"
+                    >
+                      <MessageCircle size={18} /> <span className="hidden md:inline">Compartilhar</span><span className="md:hidden">Whats</span>
+                    </button>
+                    <div className="w-full md:w-auto flex-1 md:ml-auto flex gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setEditingOs(os); }}
+                        className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+                      >
+                        <Edit size={18} /> Editar
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteOs(os.id!); }}
+                        className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
+                      >
+                        <Trash2 size={18} /> <span className="hidden md:inline">Cancelar OS</span><span className="md:hidden">Cancelar</span>
+                      </button>
+                    </div>
+                  </div>
+                </ExpandableCard>
+              ))}
             </div>
           </div>
         )}
@@ -1707,170 +1717,201 @@ export default function AdminPanel({ drivers, orders, clients = [], onLogout }: 
         )}
 
         {activeTab === 'CLIENT_LIST' && (
-          <div className="p-8 max-w-7xl mx-auto animate-in fade-in duration-300">
-            <div className="flex justify-between items-end mb-8">
+          <div className="p-3 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-300">
+            <div className="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-4 md:mb-8">
               <div>
-                <h2 className="text-3xl font-black font-display text-slate-900 tracking-tight">Clientes</h2>
+                <h2 className="text-2xl md:text-3xl font-black font-display text-slate-900 tracking-tight">Clientes</h2>
                 <p className="text-slate-500 mt-2 font-medium">Gerenciamento de clientes cadastrados.</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-sm">
-                      <th className="p-4 font-bold text-slate-700">Nome / Razão Social</th>
-                      <th className="p-4 font-bold text-slate-700">Documento</th>
-                      <th className="p-4 font-bold text-slate-700">Telefone</th>
-                      <th className="p-4 font-bold text-slate-700 text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {clients.length === 0 ? (
-                      <tr>
-                        <td colSpan={4} className="p-8 text-center text-slate-500">
-                          Nenhum cliente cadastrado.
-                        </td>
-                      </tr>
-                    ) : (
-                      clients.map(c => (
-                        <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 font-semibold text-indigo-600 hover:underline cursor-pointer" onClick={() => { setSelectedClientId(c.id); setActiveTab('CLIENT_DETAIL'); }}>{c.name}</td>
-                          <td className="p-4 text-slate-600">{c.document}</td>
-                          <td className="p-4 text-slate-600">{c.phone}</td>
-                          <td className="p-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => {
-                                  setSelectedClientId(c.id); setActiveTab('CLIENT_DETAIL');
-                                }}
-                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                title="Acessar Cadastro/Financeiro"
-                              >
-                                <CreditCard size={18} />
-                              </button>
-                              <button 
-                                onClick={() => setEditingClient(c)}
-                                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                title="Editar Cliente"
-                              >
-                                <Edit size={18} />
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  setConfirmModal({
-                                    title: 'Excluir Cliente',
-                                    message: 'Tem certeza que deseja excluir este cliente? Esta ação é irreversível.',
-                                    onConfirm: async () => {
-                                      try {
-                                        await deleteDoc(doc(db, 'clients', c.id));
-                                        toast.success("Cliente excluído");
-                                      } catch (error) {
-                                        console.error("Erro ao excluir", error);
-                                        toast.error("Erro ao excluir cliente");
-                                      }
-                                      setConfirmModal(null);
-                                    }
-                                  });
-                                }}
-                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                title="Excluir Cliente"
-                              >
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            <div className="space-y-3">
+              {clients.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 bg-white rounded-xl border border-slate-200">
+                  Nenhum cliente cadastrado.
+                </div>
+              ) : (
+                clients.map(c => (
+                  <ExpandableCard
+                    key={c.id}
+                    id={c.id!}
+                    isExpanded={!!expandedClientIds[c.id!]}
+                    onToggle={toggleClientExpanded}
+                    header={
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-slate-900 text-sm md:text-lg">{c.name}</span>
+                          <span className="text-xs text-slate-500 md:hidden">{c.phone}</span>
+                        </div>
+                        <div className="hidden md:flex items-center gap-6 text-sm text-slate-600">
+                          <div className="flex flex-col items-end">
+                            <span className="font-medium text-slate-500 text-xs">Telefone</span>
+                            <span className="font-semibold text-slate-800">{c.phone}</span>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="font-medium text-slate-500 text-xs">Documento</span>
+                            <span className="font-semibold text-slate-800">{c.document}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Documento (CPF/CNPJ)</p>
+                        <p className="font-medium text-slate-900">{c.document || 'N/A'}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Telefone</p>
+                        <p className="font-medium text-slate-900">{c.phone || 'N/A'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setSelectedClientId(c.id); setActiveTab('CLIENT_DETAIL'); }}
+                        className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
+                      >
+                        <CreditCard size={18} /> Iniciar Suporte / Cadastro
+                      </button>
+                      <div className="w-full md:w-auto flex-1 md:ml-auto flex gap-2">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setEditingClient(c); }}
+                          className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+                        >
+                          <Edit size={18} /> Editar
+                        </button>
+                        <button
+                          onClick={(e) => { 
+                            e.stopPropagation();
+                            setConfirmModal({
+                              title: 'Excluir Cliente',
+                              message: 'Tem certeza que deseja excluir este cliente? Esta ação é irreversível.',
+                              onConfirm: async () => {
+                                try {
+                                  await deleteDoc(doc(db, 'clients', c.id));
+                                  toast.success("Cliente excluído");
+                                } catch (error) {
+                                  console.error("Erro ao excluir", error);
+                                  toast.error("Erro ao excluir cliente");
+                                }
+                                setConfirmModal(null);
+                              }
+                            });
+                          }}
+                          className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
+                        >
+                          <Trash2 size={18} /> Excluir
+                        </button>
+                      </div>
+                    </div>
+                  </ExpandableCard>
+                ))
+              )}
             </div>
           </div>
         )}
 
         {activeTab === 'DRIVER_LIST' && (
-          <div className="max-w-6xl mx-auto animate-in fade-in duration-300">
-             <div className="mb-8 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+          <div className="p-3 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-300">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 md:mb-8">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">Motoristas Cadastrados</h2>
-                <p className="text-slate-500">Gestão e aprovação da frota de motoristas e documentação.</p>
+                <h2 className="text-2xl md:text-3xl font-black font-display text-slate-900 tracking-tight">Motoristas e Frota</h2>
+                <p className="text-slate-500 mt-2 font-medium">Gerencie sua equipe, veículos e acertos financeiros.</p>
               </div>
-              <div className="relative w-full md:w-72">
+            </div>
+
+            <div className="bg-white p-3 md:p-4 rounded-lg md:rounded-2xl border border-slate-200 mb-6 shadow-sm">
+              <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input 
                   type="text" 
-                  placeholder="Buscar por nome, CPF ou placa..."
+                  placeholder="Buscar por nome, placa ou CPF..."
                   value={driverSearch}
                   onChange={(e) => setDriverSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
                 />
               </div>
             </div>
-            
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Motorista / Contato</th>
-                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Veículo / Placa</th>
-                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
-                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {drivers.filter(d => {
-                      const s = driverSearch.toLowerCase();
-                      return d.name.toLowerCase().includes(s) || 
-                             d.cpf.toLowerCase().includes(s) || 
-                             d.vehiclePlateHorse.toLowerCase().includes(s);
-                    }).length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                          Nenhum motorista encontrado.
-                        </td>
-                      </tr>
-                    ) : drivers.filter(d => {
-                      const s = driverSearch.toLowerCase();
-                      return d.name.toLowerCase().includes(s) || 
-                             d.cpf.toLowerCase().includes(s) || 
-                             d.vehiclePlateHorse.toLowerCase().includes(s);
-                    }).map(driver => (
-                        <tr key={driver.id} className="hover:bg-slate-50 transition-colors group">
-                          <td className="px-6 py-4 cursor-pointer" onClick={() => { setSelectedDriverId(driver.id); setActiveTab('DRIVER_DETAIL'); }}>
-                            <div className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{driver.name}</div>
-                            <div className="text-xs text-slate-500 mt-1">CPF: {driver.cpf} • Cel: {driver.phone}</div>
-                          </td>
-                          <td className="px-6 py-4 cursor-pointer" onClick={() => { setSelectedDriverId(driver.id); setActiveTab('DRIVER_DETAIL'); }}>
-                            <div className="font-semibold text-slate-800">{driver.vehicleType || 'Não Informado'}</div>
-                            <div className="text-xs text-slate-500 mt-1">Placa: {driver.vehiclePlateHorse}</div>
-                          </td>
-                          <td className="px-6 py-4 text-center cursor-pointer" onClick={() => { setSelectedDriverId(driver.id); setActiveTab('DRIVER_DETAIL'); }}>
-                            <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full">
-                              Ativo
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <button 
-                              onClick={(e) => { 
-                                e.stopPropagation(); 
-                                setFinanceDriverId(driver.id); 
-                                setActiveTab('DRIVER_DETAIL'); 
-                              }} 
-                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                              title="Acessar Financeiro do Motorista"
-                            >
-                              <CreditCard size={18} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
+
+            <div className="space-y-3">
+              {drivers.filter(d => {
+                const s = driverSearch.toLowerCase();
+                return d.name.toLowerCase().includes(s) || 
+                       d.cpf.toLowerCase().includes(s) || 
+                       d.vehiclePlateHorse.toLowerCase().includes(s);
+              }).length === 0 ? (
+                <div className="p-8 text-center text-slate-500 bg-white rounded-xl border border-slate-200">
+                  Nenhum motorista encontrado.
+                </div>
+              ) : drivers.filter(d => {
+                const s = driverSearch.toLowerCase();
+                return d.name.toLowerCase().includes(s) || 
+                       d.cpf.toLowerCase().includes(s) || 
+                       d.vehiclePlateHorse.toLowerCase().includes(s);
+              }).map(driver => (
+                <ExpandableCard
+                  key={driver.id}
+                  id={driver.id!}
+                  isExpanded={!!expandedDriverIds[driver.id!]}
+                  onToggle={toggleDriverExpanded}
+                  header={
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-lg hidden md:flex">
+                          {driver.name.charAt(0)}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-slate-900 text-sm md:text-lg">{driver.name}</span>
+                          <span className="text-xs text-slate-500">{driver.vehicleType || 'Não Informado'} • Placa: {driver.vehiclePlateHorse}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] md:text-xs font-semibold rounded-full border border-emerald-200">
+                          Online
+                        </span>
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Documento (CPF)</p>
+                      <p className="font-medium text-slate-900">{driver.cpf || 'N/A'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Contato</p>
+                      <p className="font-medium text-slate-900">{driver.phone || 'N/A'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Veículo / Tipo</p>
+                      <p className="font-medium text-slate-900">{driver.vehicleType || 'Não Informado'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                    <button
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setFinanceDriverId(driver.id); 
+                        setSelectedDriverId(driver.id);
+                        setActiveTab('DRIVER_DETAIL'); 
+                      }} 
+                      className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg font-medium hover:bg-emerald-100 transition-colors"
+                    >
+                      <CreditCard size={18} /> Acerto Financeiro
+                    </button>
+                    <div className="w-full md:w-auto flex-1 md:ml-auto flex gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setSelectedDriverId(driver.id); setActiveTab('DRIVER_DETAIL'); }}
+                        className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+                      >
+                        <UserPlus size={18} /> Abrir Perfil
+                      </button>
+                    </div>
+                  </div>
+                </ExpandableCard>
+              ))}
             </div>
           </div>
         )}
@@ -1918,7 +1959,7 @@ function SidebarButton({ active, icon, label, onClick }: { active: boolean, icon
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+      className={`w-full flex items-center gap-3 px-3 py-2 md:px-4 md:py-3 rounded-xl transition-all duration-200 ${
         active 
           ? 'bg-indigo-600/10 text-indigo-400 font-medium' 
           : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
@@ -2004,7 +2045,7 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
 
   return (
     <div className="max-w-6xl mx-auto animate-in slide-in-from-right-4 duration-300 pb-12">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-3 md:mb-4 md:mb-6">
         <button 
           onClick={onBack}
           className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium transition-colors"
@@ -2013,28 +2054,28 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-        <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50">
+      <div className="bg-white rounded-lg md:rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-3 md:mb-4 md:mb-8">
+        <div className="p-3 md:p-8 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50">
           <div>
-            <h2 className="text-3xl font-black text-slate-900 font-display">{driver.name}</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 font-display">{driver.name}</h2>
             <p className="text-slate-500 font-medium mt-1">Placa: {driver.vehiclePlateHorse} | Veículo: {driver.vehicleType}</p>
           </div>
           <div className="flex gap-2 bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-            <button onClick={() => setDetailTab('INFO')} className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${detailTab === 'INFO' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
+            <button onClick={() => setDetailTab('INFO')} className={`px-3 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-all ${detailTab === 'INFO' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
               Dados Cadastrais
             </button>
-            <button onClick={() => setDetailTab('FINANCE')} className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${detailTab === 'FINANCE' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
+            <button onClick={() => setDetailTab('FINANCE')} className={`px-3 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-all ${detailTab === 'FINANCE' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
               Financeiro & OS
             </button>
           </div>
         </div>
 
         {detailTab === 'INFO' && (
-          <div className="p-8">
-            <div className="flex justify-end gap-3 mb-6">
+          <div className="p-3 md:p-8">
+            <div className="flex justify-end gap-3 mb-3 md:mb-4 md:mb-6">
               <button 
                 onClick={() => setIsEditing(!isEditing)}
-                className={`flex items-center gap-2 font-medium px-4 py-2 rounded-lg transition-colors ${
+                className={`flex items-center gap-2 font-medium px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors ${
                   isEditing ? 'bg-slate-200 text-slate-700 hover:bg-slate-300' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
                 }`}
               >
@@ -2042,7 +2083,7 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
               </button>
               <button 
                 onClick={handleDelete}
-                className="flex items-center gap-2 text-red-600 hover:bg-red-50 bg-red-50/50 font-medium px-4 py-2 rounded-lg transition-colors border border-red-100"
+                className="flex items-center gap-2 text-red-600 hover:bg-red-50 bg-red-50/50 font-medium px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors border border-red-100"
               >
                 <Trash2 size={18} /> Excluir
               </button>
@@ -2050,31 +2091,31 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
             
             {isEditing ? (
 
-        <form onSubmit={handleEditSubmit} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8 p-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Editar Dados do Motorista</h2>
+        <form onSubmit={handleEditSubmit} className="bg-white rounded-lg md:rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-3 md:mb-4 md:mb-8 p-3 md:p-8">
+          <h2 className="text-xl md:text-xl md:text-2xl font-bold text-slate-900 mb-3 md:mb-4 md:mb-6">Editar Dados do Motorista</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Pessoais</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-2 md:gap-6 mb-3 md:mb-4 md:mb-8">
+            <div className="space-y-3 md:space-y-4">
+              <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Pessoais</h3>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
-                <input name="name" defaultValue={driver.name} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
+                <input name="name" defaultValue={driver.name} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">CPF</label>
-                  <input name="cpf" defaultValue={driver.cpf} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">CPF</label>
+                  <input name="cpf" defaultValue={driver.cpf} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Celular</label>
-                  <input name="phone" defaultValue={driver.phone} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Celular</label>
+                  <input name="phone" defaultValue={driver.phone} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Senha de Acesso</label>
+                <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Senha de Acesso</label>
                 <div className="flex gap-2">
-                  <input name="password" defaultValue={driver.password || ''} className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Deixe em branco para não alterar" />
+                  <input name="password" defaultValue={driver.password || ''} className="flex-1 px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Deixe em branco para não alterar" />
                   <button 
                     type="button" 
                     onClick={() => {
@@ -2104,76 +2145,76 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Validade CNH</label>
-                  <input name="cnhExpiry" type="date" defaultValue={driver.cnhExpiry} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Validade CNH</label>
+                  <input name="cnhExpiry" type="date" defaultValue={driver.cnhExpiry} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Validade RNTRC</label>
-                  <input name="rntrcExpiry" type="date" defaultValue={driver.rntrcExpiry} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Validade RNTRC</label>
+                  <input name="rntrcExpiry" type="date" defaultValue={driver.rntrcExpiry} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados do Veículo</h3>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-3 md:space-y-4">
+              <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados do Veículo</h3>
+              <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Tipo de Veículo</label>
-                  <input name="vehicleType" defaultValue={driver.vehicleType} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Tipo de Veículo</label>
+                  <input name="vehicleType" defaultValue={driver.vehicleType} className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Eixos</label>
-                  <input name="axes" type="number" defaultValue={driver.axes} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Placa Cavalo</label>
-                  <input name="vehiclePlateHorse" defaultValue={driver.vehiclePlateHorse} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Placa Carreta</label>
-                  <input name="vehiclePlateTrailer" defaultValue={driver.vehiclePlateTrailer} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Eixos</label>
+                  <input name="axes" type="number" defaultValue={driver.axes} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-1.5 md:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Capacidade/Peso</label>
-                  <input name="capacityWeight" defaultValue={driver.capacityWeight} placeholder="Ex: 3.500 kg" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Placa Cavalo</label>
+                  <input name="vehiclePlateHorse" defaultValue={driver.vehiclePlateHorse} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Carroceria</label>
-                  <input name="bodyType" defaultValue={driver.bodyType} placeholder="Ex: Baú" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Placa Carreta</label>
+                  <input name="vehiclePlateTrailer" defaultValue={driver.vehiclePlateTrailer} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1.5 md:gap-4">
+                <div>
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Capacidade/Peso</label>
+                  <input name="capacityWeight" defaultValue={driver.capacityWeight} placeholder="Ex: 3.500 kg" className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Ano/Modelo</label>
-                  <input name="yearModel" defaultValue={driver.yearModel} placeholder="Ex: 2022/2022" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Carroceria</label>
+                  <input name="bodyType" defaultValue={driver.bodyType} placeholder="Ex: Baú" className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Ano/Modelo</label>
+                  <input name="yearModel" defaultValue={driver.yearModel} placeholder="Ex: 2022/2022" className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                 </div>
               </div>
             </div>
             
-            <div className="space-y-4 md:col-span-2">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Bancários</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="space-y-3 md:space-y-4 md:col-span-2">
+              <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Bancários</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 md:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Tipo Chave PIX</label>
-                  <input name="pixKeyType" defaultValue={driver.pixKeyType} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Tipo Chave PIX</label>
+                  <input name="pixKeyType" defaultValue={driver.pixKeyType} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Chave PIX</label>
-                  <input name="pixKey" defaultValue={driver.pixKey} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Chave PIX</label>
+                  <input name="pixKey" defaultValue={driver.pixKey} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Banco</label>
-                  <input name="bank" defaultValue={driver.bank} required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Banco</label>
+                  <input name="bank" defaultValue={driver.bank} required className="w-full px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Agência/Conta</label>
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">Agência/Conta</label>
                   <div className="flex gap-2">
-                    <input name="agency" defaultValue={driver.agency} placeholder="Ag" className="w-1/3 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                    <input name="account" defaultValue={driver.account} placeholder="Conta" className="w-2/3 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                    <input name="agency" defaultValue={driver.agency} placeholder="Ag" className="w-1/3 px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                    <input name="account" defaultValue={driver.account} placeholder="Conta" className="w-2/3 px-3 py-1.5 md:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
                   </div>
                 </div>
               </div>
@@ -2188,19 +2229,19 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
         
             </form>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-4 md:gap-8">
                 {/* Visualização de dados, igual ao que já existia ou podemos abstrair, o que estava antes do isEditing no original era so um if e ja ia pros forms... */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Pessoais</h3>
-                  <div><span className="text-slate-500 text-sm">Nome:</span> <p className="font-semibold">{driver.name}</p></div>
-                  <div><span className="text-slate-500 text-sm">CPF:</span> <p className="font-semibold">{driver.cpf}</p></div>
-                  <div><span className="text-slate-500 text-sm">Celular:</span> <p className="font-semibold">{driver.phone}</p></div>
+                <div className="space-y-3 md:space-y-4">
+                  <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Pessoais</h3>
+                  <div><span className="text-slate-500 text-xs md:text-sm">Nome:</span> <p className="font-semibold">{driver.name}</p></div>
+                  <div><span className="text-slate-500 text-xs md:text-sm">CPF:</span> <p className="font-semibold">{driver.cpf}</p></div>
+                  <div><span className="text-slate-500 text-xs md:text-sm">Celular:</span> <p className="font-semibold">{driver.phone}</p></div>
                 </div>
-                <div className="space-y-4">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Bancários</h3>
-                  <div><span className="text-slate-500 text-sm">Chave PIX:</span> <p className="font-semibold">{driver.pixKey} ({driver.pixKeyType})</p></div>
-                  <div><span className="text-slate-500 text-sm">Banco:</span> <p className="font-semibold">{driver.bank}</p></div>
-                  <div><span className="text-slate-500 text-sm">Agência/Conta:</span> <p className="font-semibold">{driver.agency} / {driver.account}</p></div>
+                <div className="space-y-3 md:space-y-4">
+                  <h3 className="text-sm md:text-base font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Dados Bancários</h3>
+                  <div><span className="text-slate-500 text-xs md:text-sm">Chave PIX:</span> <p className="font-semibold">{driver.pixKey} ({driver.pixKeyType})</p></div>
+                  <div><span className="text-slate-500 text-xs md:text-sm">Banco:</span> <p className="font-semibold">{driver.bank}</p></div>
+                  <div><span className="text-slate-500 text-xs md:text-sm">Agência/Conta:</span> <p className="font-semibold">{driver.agency} / {driver.account}</p></div>
                 </div>
               </div>
             )}
@@ -2208,17 +2249,17 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
         )}
 
         {detailTab === 'FINANCE' && (
-          <div className="p-8 bg-slate-50">
+          <div className="p-3 md:p-8 bg-slate-50">
              
              
-             <div className="flex justify-between items-end mb-6">
+             <div className="flex justify-between items-end mb-3 md:mb-4 md:mb-6">
                 <div>
-                   <h3 className="text-xl font-bold text-slate-900">Histórico de Corridas</h3>
-                   <p className="text-sm text-slate-500">Selecione as OSs pendentes para fechamento.</p>
+                   <h3 className="text-lg md:text-xl font-bold text-slate-900">Histórico de Corridas</h3>
+                   <p className="text-xs md:text-sm text-slate-500">Selecione as OSs pendentes para fechamento.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     {driverOrders.filter(o => selectedOsIds[o.id!]).length > 0 && (
-                      <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-medium text-sm">
+                      <div className="bg-indigo-50 text-indigo-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm">
                         📝 {driverOrders.filter(o => selectedOsIds[o.id!]).length} OSs selecionadas — Total: {formatBRL(driverOrders.filter(o => selectedOsIds[o.id!]).reduce((acc, os) => acc + (os.netValue || 0), 0))}
                       </div>
                     )}
@@ -2228,7 +2269,7 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
                         if (selected.length === 0) return toast.error('Selecione pelo menos uma OS');
                         onGenerateStatement(selected, driver);
                       }}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold flex items-center gap-2 transition-colors shadow-sm"
                     >
                       <FileText size={16} /> Exibir Relatório
                     </button>
@@ -2239,12 +2280,12 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
                         for (const os of selected) {
                           const { updateDoc, doc } = await import('firebase/firestore');
                           const { db } = await import('../firebase');
-                          await updateDoc(doc(db, 'orders', os.id!), { paymentStatusDriver: 'PAID' });
+                          await updateDoc(doc(db, 'orders', os.id!), { paymentStatusDriver: 'PAID', driverPaymentStatus: 'Pago' });
                         }
                         import('sonner').then(({toast}) => toast.success('Pagamento confirmado!'));
                         setSelectedOsIds({});
                       }}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold flex items-center gap-2 transition-colors shadow-sm"
                     >
                       <CheckCircle2 size={16} /> Fechar Pagamento
                     </button>
@@ -2252,10 +2293,10 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
              </div>
 
              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-xs md:text-sm">
                   <thead className="bg-slate-100 border-b border-slate-200 text-slate-600">
                     <tr>
-                      <th className="px-4 py-3 text-center">
+                      <th className="px-3 py-2 md:px-4 md:py-3 text-center">
                         <input type="checkbox" className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" 
                           onChange={e => {
                             const val = e.target.checked;
@@ -2265,34 +2306,34 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
                           }}
                         />
                       </th>
-                      <th className="px-4 py-3 font-semibold">OS</th>
-                      <th className="px-4 py-3 font-semibold">Data</th>
-                      <th className="px-4 py-3 font-semibold">Rota</th>
-                      <th className="px-4 py-3 font-semibold text-right">Valor Líquido</th>
-                      <th className="px-4 py-3 font-semibold text-center">Status Pgto</th>
-                      <th className="px-4 py-3 font-semibold text-center">Ações</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">OS</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">Data</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">Rota</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold text-right">Valor Líquido</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold text-center">Status Pgto</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold text-center">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {driverOrders.map(os => (
                       <tr key={os.id} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <input type="checkbox" disabled={os.paymentStatusDriver === 'PAID'} checked={!!selectedOsIds[os.id!]}
                             onChange={e => setSelectedOsIds({...selectedOsIds, [os.id!]: e.target.checked})}
                             className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 disabled:opacity-50"
                           />
                         </td>
-                        <td className="px-4 py-3 font-bold text-slate-800">#{os.number}</td>
-                        <td className="px-4 py-3 text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
-                        <td className="px-4 py-3 text-slate-700 max-w-[200px] truncate">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
-                        <td className="px-4 py-3 font-bold text-indigo-700 text-right">{formatBRL(os.netValue || 0)}</td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-slate-800">#{os.number}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-700 max-w-[200px] truncate">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-indigo-700 text-right">{formatBRL(os.netValue || 0)}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-full ${os.paymentStatusDriver === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                             {os.paymentStatusDriver === 'PAID' ? 'Pago' : 'Pendente'}
                           </span>
                         </td>
 
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => onEditOs(os)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" title="Editar"><Edit size={16} /></button>
                             <button onClick={() => onDeleteOs(os.id!)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Excluir Definitivamente"><Trash2 size={16} /></button>
@@ -2301,7 +2342,7 @@ function DriverDetailView({ driverId, drivers, orders, onBack, onPrintOs, onSend
 
                       </tr>
                     ))}
-                    {driverOrders.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-slate-500">Nenhuma OS encontrada</td></tr>}
+                    {driverOrders.length === 0 && <tr><td colSpan={7} className="p-3 md:p-8 text-center text-slate-500">Nenhuma OS encontrada</td></tr>}
                   </tbody>
                 </table>
              </div>
@@ -2326,7 +2367,7 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
 
   return (
     <div className="max-w-6xl mx-auto animate-in slide-in-from-right-4 duration-300 pb-12">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-3 md:mb-4 md:mb-6">
         <button 
           onClick={onBack}
           className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium transition-colors"
@@ -2335,56 +2376,56 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-        <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50">
+      <div className="bg-white rounded-lg md:rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-3 md:mb-4 md:mb-8">
+        <div className="p-3 md:p-8 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50">
           <div>
-            <h2 className="text-3xl font-black text-slate-900 font-display">{client.name}</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 font-display">{client.name}</h2>
             <p className="text-slate-500 font-medium mt-1">CNPJ/CPF: {client.document}</p>
           </div>
           <div className="flex gap-2 bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-            <button onClick={() => setDetailTab('INFO')} className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${detailTab === 'INFO' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
+            <button onClick={() => setDetailTab('INFO')} className={`px-3 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-all ${detailTab === 'INFO' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
               Dados Cadastrais
             </button>
-            <button onClick={() => setDetailTab('FINANCE')} className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${detailTab === 'FINANCE' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
+            <button onClick={() => setDetailTab('FINANCE')} className={`px-3 md:px-6 py-2 rounded-lg font-bold text-xs md:text-sm transition-all ${detailTab === 'FINANCE' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}>
               Financeiro & OS
             </button>
           </div>
         </div>
 
         {detailTab === 'INFO' && (
-          <div className="p-8">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Informações do Cliente</h3>
-            <div className="grid grid-cols-2 gap-6">
+          <div className="p-3 md:p-8">
+            <h3 className="text-base md:text-lg font-bold text-slate-800 mb-3 md:mb-4 border-b pb-2">Informações do Cliente</h3>
+            <div className="grid grid-cols-2 gap-3 md:gap-2 md:gap-6">
               <div>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Nome/Razão Social</p>
+                <p className="text-sm md:text-base font-bold text-slate-500 uppercase tracking-wider mb-1">Nome/Razão Social</p>
                 <p className="font-semibold text-slate-900">{client.name}</p>
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Documento</p>
+                <p className="text-sm md:text-base font-bold text-slate-500 uppercase tracking-wider mb-1">Documento</p>
                 <p className="font-semibold text-slate-900">{client.document}</p>
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Telefone</p>
+                <p className="text-sm md:text-base font-bold text-slate-500 uppercase tracking-wider mb-1">Telefone</p>
                 <p className="font-semibold text-slate-900">{client.phone}</p>
               </div>
             </div>
-            <div className="mt-8 pt-6 border-t border-slate-100 text-right">
-                <span className="text-sm text-slate-400">O status operacional do motorista é checado automaticamente pelas validades.</span>
+            <div className="mt-4 md:mt-8 pt-6 border-t border-slate-100 text-right">
+                <span className="text-xs md:text-sm text-slate-400">O status operacional do motorista é checado automaticamente pelas validades.</span>
             </div>
           </div>
         )}
 
         {detailTab === 'FINANCE' && (
-          <div className="p-8 bg-slate-50">
+          <div className="p-3 md:p-8 bg-slate-50">
              
-             <div className="flex justify-between items-end mb-6">
+             <div className="flex justify-between items-end mb-3 md:mb-4 md:mb-6">
                 <div>
-                   <h3 className="text-xl font-bold text-slate-900">Histórico e Faturamento</h3>
-                   <p className="text-sm text-slate-500">Selecione as OSs pendentes para gerar fatura ou marcar como recebido.</p>
+                   <h3 className="text-lg md:text-xl font-bold text-slate-900">Histórico e Faturamento</h3>
+                   <p className="text-xs md:text-sm text-slate-500">Selecione as OSs pendentes para gerar fatura ou marcar como recebido.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     {clientOrders.filter(o => selectedOsIds[o.id!]).length > 0 && (
-                      <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-medium text-sm">
+                      <div className="bg-indigo-50 text-indigo-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm">
                         📝 {clientOrders.filter(o => selectedOsIds[o.id!]).length} OSs selecionadas — Total: {formatBRL(clientOrders.filter(o => selectedOsIds[o.id!]).reduce((acc, os) => acc + (os.totalValue || 0), 0))}
                       </div>
                     )}
@@ -2394,7 +2435,7 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
                         if (selected.length === 0) return toast.error('Selecione pelo menos uma OS');
                         onGenerateStatement(selected, client.name, client.document);
                       }}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold flex items-center gap-2 transition-colors shadow-sm"
                     >
                       <FileText size={16} /> Exibir Relatório
                     </button>
@@ -2405,12 +2446,12 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
                         for (const os of selected) {
                           const { updateDoc, doc } = await import('firebase/firestore');
                           const { db } = await import('../firebase');
-                          await updateDoc(doc(db, 'orders', os.id!), { paymentStatusClient: 'PAID' });
+                          await updateDoc(doc(db, 'orders', os.id!), { paymentStatusClient: 'PAID', clientPaymentStatus: 'Pago' });
                         }
                         import('sonner').then(({toast}) => toast.success('Recebimento confirmado!'));
                         setSelectedOsIds({});
                       }}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold flex items-center gap-2 transition-colors shadow-sm"
                     >
                       <CheckCircle2 size={16} /> Marcar Recebido
                     </button>
@@ -2418,10 +2459,10 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
              </div>
 
              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden overflow-x-auto">
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-xs md:text-sm">
                   <thead className="bg-slate-100 border-b border-slate-200 text-slate-600">
                     <tr>
-                      <th className="px-4 py-3 text-center">
+                      <th className="px-3 py-2 md:px-4 md:py-3 text-center">
                         <input type="checkbox" className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" 
                           onChange={e => {
                             const val = e.target.checked;
@@ -2431,34 +2472,34 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
                           }}
                         />
                       </th>
-                      <th className="px-4 py-3 font-semibold">OS</th>
-                      <th className="px-4 py-3 font-semibold">Data</th>
-                      <th className="px-4 py-3 font-semibold">Rota</th>
-                      <th className="px-4 py-3 font-semibold text-right">Valor</th>
-                      <th className="px-4 py-3 font-semibold text-center">Status</th>
-                      <th className="px-4 py-3 font-semibold text-center">Ações</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">OS</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">Data</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">Rota</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold text-right">Valor</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold text-center">Status</th>
+                      <th className="px-3 py-2 md:px-4 md:py-3 font-semibold text-center">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {clientOrders.map(os => (
                       <tr key={os.id} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <input type="checkbox" disabled={os.paymentStatusClient === 'PAID'} checked={!!selectedOsIds[os.id!]}
                             onChange={e => setSelectedOsIds({...selectedOsIds, [os.id!]: e.target.checked})}
                             className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 disabled:opacity-50"
                           />
                         </td>
-                        <td className="px-4 py-3 font-bold text-slate-800">#{os.number}</td>
-                        <td className="px-4 py-3 text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
-                        <td className="px-4 py-3 text-slate-700 max-w-[200px] truncate">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
-                        <td className="px-4 py-3 font-bold text-indigo-700 text-right">{formatBRL(os.totalValue || 0)}</td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-slate-800">#{os.number}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-500">{new Date(os.createdAt).toLocaleDateString('pt-BR')}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-slate-700 max-w-[200px] truncate">{os.origin.split(',')[0]} → {os.destinations?.[0]?.split(',')[0]}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 font-bold text-indigo-700 text-right">{formatBRL(os.totalValue || 0)}</td>
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-full ${os.paymentStatusClient === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                             {os.paymentStatusClient === 'PAID' ? 'Recebido' : 'Pendente'}
                           </span>
                         </td>
 
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-3 py-2 md:px-4 md:py-3 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => onEditOs(os)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" title="Editar"><Edit size={16} /></button>
                             <button onClick={() => onDeleteOs(os.id!)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Excluir Definitivamente"><Trash2 size={16} /></button>
@@ -2467,7 +2508,7 @@ function ClientDetailView({ clientId, clients, orders, onBack, onGenerateStateme
 
                       </tr>
                     ))}
-                    {clientOrders.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-slate-500">Nenhuma OS encontrada</td></tr>}
+                    {clientOrders.length === 0 && <tr><td colSpan={7} className="p-3 md:p-8 text-center text-slate-500">Nenhuma OS encontrada</td></tr>}
                   </tbody>
                 </table>
              </div>

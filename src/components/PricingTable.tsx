@@ -37,8 +37,8 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
 
   return (
     <div className="max-w-6xl mx-auto animate-in fade-in duration-300">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between mb-3 md:mb-4 md:mb-8">
+        <div className="flex items-center gap-1.5 md:gap-4">
           {onBack && (
             <button 
               onClick={onBack}
@@ -49,21 +49,21 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
             </button>
           )}
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Matriz de Tarifas (Tabela de Preços)</h2>
+            <h2 className="text-xl md:text-xl md:text-2xl font-bold text-slate-900">Matriz de Tarifas (Tabela de Preços)</h2>
             <p className="text-slate-500">Valores de frete por faixas de Km e tipo de veículo.</p>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-1.5 md:gap-4">
           <button 
             onClick={handleReset}
-            className="flex items-center gap-2 px-4 py-2 text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
           >
             <RefreshCw size={18} />
             Restaurar Padrão
           </button>
           <button 
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+            className="flex items-center gap-2 px-3 md:px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
           >
             <Save size={18} />
             Salvar Alterações
@@ -71,29 +71,29 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+      <div className="bg-white rounded-lg md:rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-3 md:mb-4 md:mb-8">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-xs md:text-sm">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-600">
               <tr>
-                <th className="px-4 py-3 font-semibold whitespace-nowrap sticky left-0 bg-slate-50 z-10 border-r">Faixa Km (Ida+Volta)</th>
-                <th className="px-4 py-3 font-semibold">PASSEIO</th>
-                <th className="px-4 py-3 font-semibold">FIORINO</th>
-                <th className="px-4 py-3 font-semibold">VAN/HR</th>
-                <th className="px-4 py-3 font-semibold">VUC</th>
-                <th className="px-4 py-3 font-semibold">MÉDIO</th>
-                <th className="px-4 py-3 font-semibold">TOCO</th>
-                <th className="px-4 py-3 font-semibold">TRUCK</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold whitespace-nowrap sticky left-0 bg-slate-50 z-10 border-r">Faixa Km (Ida+Volta)</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">PASSEIO</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">FIORINO</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">VAN/HR</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">VUC</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">MÉDIO</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">TOCO</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 font-semibold">TRUCK</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {localTiers.map((tier, idx) => (
                 <tr key={tier.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r">
+                  <td className="px-3 py-2 md:px-4 md:py-3 font-medium text-slate-700 whitespace-nowrap sticky left-0 bg-white group-hover:bg-slate-50 z-10 border-r">
                     {tier.label}
                   </td>
                   {(['passeio', 'fiorino', 'van', 'vuc', 'medio', 'toco', 'truck'] as Array<keyof PricingExcess>).map(v => (
-                    <td key={v} className="px-4 py-2">
+                    <td key={v} className="px-3 py-1.5 md:px-4 md:py-2">
                       <div className="relative">
                         <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">R$</span>
                         <input 
@@ -101,7 +101,7 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
                           step="0.01"
                           value={tier.prices[v]}
                           onChange={(e) => handlePriceChange(idx, v, e.target.value)}
-                          className="w-32 pl-7 pr-2 py-1.5 text-right border border-slate-200 rounded text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium"
+                          className="w-32 pl-7 pr-2 py-1.5 text-right border border-slate-200 rounded text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-xs md:text-sm font-medium"
                         />
                       </div>
                     </td>
@@ -109,11 +109,11 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
                 </tr>
               ))}
               <tr className="bg-amber-50/50 hover:bg-amber-50 transition-colors">
-                <td className="px-4 py-4 font-bold text-amber-800 whitespace-nowrap sticky left-0 bg-amber-50/50 z-10 border-r">
+                <td className="px-3 py-3 md:px-4 md:py-4 font-bold text-amber-800 whitespace-nowrap sticky left-0 bg-amber-50/50 z-10 border-r">
                   Excedente/Km (&gt; 1000)
                 </td>
                 {(['passeio', 'fiorino', 'van', 'vuc', 'medio', 'toco', 'truck'] as Array<keyof PricingExcess>).map(v => (
-                  <td key={v} className="px-4 py-3">
+                  <td key={v} className="px-3 py-2 md:px-4 md:py-3">
                     <div className="relative">
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-amber-600/60 text-xs">R$</span>
                       <input 
@@ -121,7 +121,7 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
                         step="0.01"
                         value={localExcess[v]}
                         onChange={(e) => handleExcessChange(v, e.target.value)}
-                        className="w-32 pl-7 pr-2 py-1.5 text-right border border-amber-200 rounded text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-bold bg-white"
+                        className="w-32 pl-7 pr-2 py-1.5 text-right border border-amber-200 rounded text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm md:text-base font-bold bg-white"
                       />
                     </div>
                   </td>
