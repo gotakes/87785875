@@ -45,15 +45,19 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
       setErrorMsg(null);
       
       try {
-        const url = '/api/geocode';
-        const response = await fetch(url, {
-          method: 'POST',
-          credentials: 'include',
+        const url = new URL('https://nominatim.openstreetmap.org/search');
+        url.searchParams.append('format', 'json');
+        url.searchParams.append('addressdetails', '1');
+        url.searchParams.append('limit', '5');
+        url.searchParams.append('countrycodes', 'BR');
+        url.searchParams.append('q', value);
+
+        const response = await fetch(url.toString(), {
+          method: 'GET',
           signal: abortController.signal,
           headers: {
-            'Content-Type': 'application/json'
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
           },
-          body: JSON.stringify({ query: value })
         });
         
         if (!response.ok) {
@@ -62,22 +66,12 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
         
         const data = await response.json();
         
-        if (data && data.features && data.features.length > 0) {
-           const formattedResults = data.features.map((f: any) => {
-             const props = f.properties;
-             const parts = [
-               props.name,
-               props.housenumber,
-               props.street,
-               props.district,
-               props.city,
-               props.state
-             ].filter(Boolean);
-             const uniqueParts = [...new Set(parts)];
+        if (data && Array.isArray(data) && data.length > 0) {
+           const formattedResults = data.map((f: any) => {
              return {
-               display_name: uniqueParts.join(', '),
-               lat: f.geometry.coordinates[1].toString(),
-               lon: f.geometry.coordinates[0].toString()
+               display_name: f.display_name,
+               lat: f.lat,
+               lon: f.lon
              };
            });
            setResults(formattedResults);

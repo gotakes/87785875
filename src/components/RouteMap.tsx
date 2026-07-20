@@ -65,13 +65,19 @@ function Routing({ origin, destination, isRoundTrip, onRouteCalculated }: { orig
     
     const geocode = async (query: string) => {
       try {
-        const url = '/api/geocode';
-        const res = await fetch(url, {
-          method: 'POST',
-          credentials: 'include',
+        const url = new URL('https://nominatim.openstreetmap.org/search');
+        url.searchParams.append('format', 'json');
+        url.searchParams.append('addressdetails', '1');
+        url.searchParams.append('limit', '5');
+        url.searchParams.append('countrycodes', 'BR');
+        url.searchParams.append('q', query);
+
+        const res = await fetch(url.toString(), {
+          method: 'GET',
           signal: abortController.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query })
+          headers: {
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+          },
         });
         
         if (!res.ok) {
@@ -80,9 +86,9 @@ function Routing({ origin, destination, isRoundTrip, onRouteCalculated }: { orig
         }
         
         const data = await res.json();
-        if (data && data.features && data.features.length > 0) {
-          const lat = data.features[0].geometry.coordinates[1];
-          const lon = data.features[0].geometry.coordinates[0];
+        if (data && Array.isArray(data) && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
           return L.latLng(lat, lon);
         }
       } catch (err: any) {
