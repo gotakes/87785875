@@ -159,6 +159,7 @@ export default function PrintOsModal({ printOs, onClose, onWhatsApp, userRole = 
             <div className="p-2 print:p-1"><span className="text-gray-600 block">Volumetria (M³):</span><span className="font-bold">{printOs.cargoVolume || '-'}</span></div>
           </div>
         </div>
+        {userRole !== 'CLIENT' && (
         <div className="mb-3 md:mb-4 print:mb-1 border border-blue-900">
           <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">3. QUILOMETRAGEM E OBSERVAÇÕES</div>
           <div className="grid grid-cols-2 divide-x divide-blue-900 border-b border-blue-900 text-xs print:text-[10px] leading-tight">
@@ -170,15 +171,25 @@ export default function PrintOsModal({ printOs, onClose, onWhatsApp, userRole = 
             <span className="font-bold">{printOs.observations || 'Nenhuma observação.'}</span>
           </div>
         </div>
+        )}
 
         <div className="mb-3 md:mb-4 print:mb-1 border border-blue-900">
-          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">4. VALORES</div>
+          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">{userRole === 'CLIENT' ? '3.' : '4.'} VALORES</div>
           
           {userRole === 'DRIVER' ? (
             <div className="grid grid-cols-1 divide-x divide-blue-900 text-xs print:text-[10px] leading-tight text-center">
               <div className="p-2 print:p-1 bg-emerald-50">
                 <span className="text-gray-600 block">LÍQUIDO DO MOTORISTA:</span>
                 <span className="font-bold text-xs md:text-sm print:text-xs md:text-sm print:text-xs text-emerald-700">R$ {(printOs.netValue || 0).toFixed(2).replace('.',',')}</span>
+              </div>
+            </div>
+          ) : userRole === 'CLIENT' ? (
+            <div className="grid grid-cols-1 divide-x divide-blue-900 text-xs print:text-[10px] leading-tight text-center">
+              <div className="p-2 print:p-1 bg-gray-100">
+                 <span className="text-gray-600 block">FRETE TOTAL DA OS:</span>
+                 <span className="font-bold text-xs md:text-sm print:text-xs">
+                   {`R$ ${((printOs.grossValue || 0) + (printOs.tollCost || 0) + (printOs.otherExpenses || 0)).toFixed(2).replace('.',',')}`}
+                 </span>
               </div>
             </div>
           ) : (
@@ -217,7 +228,7 @@ export default function PrintOsModal({ printOs, onClose, onWhatsApp, userRole = 
           )}
         </div>
         <div className="mb-3 md:mb-4 print:mb-1 border border-blue-900">
-          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">5. CLIENTE CONTRATOU O SERVIÇO</div>
+          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">{userRole === 'CLIENT' ? '4.' : '5.'} CLIENTE CONTRATOU O SERVIÇO</div>
           <div className="grid grid-cols-2 divide-x divide-blue-900 text-xs print:text-[10px] leading-tight">
             <div className="p-2 print:p-1"><span className="text-gray-600 block">Nome / Razão Social:</span><span className="font-bold">{printOs.clientName || 'N/A'}</span></div>
             <div className="p-2 print:p-1"><span className="text-gray-600 block">CNPJ / CPF:</span><span className="font-bold">{printOs.clientDocument || '-'}</span></div>
@@ -225,7 +236,7 @@ export default function PrintOsModal({ printOs, onClose, onWhatsApp, userRole = 
         </div>
 
         <div className="mb-3 md:mb-4 print:mb-1 border border-blue-900">
-          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">6. INFORMAÇÕES COMPLEMENTARES</div>
+          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">{userRole === 'CLIENT' ? '5.' : '6.'} INFORMAÇÕES COMPLEMENTARES</div>
           <div className="grid grid-cols-4 divide-x divide-blue-900 text-xs print:text-[10px] leading-tight">
             <div className="p-2 print:p-1"><span className="text-gray-600 block">Nota Fiscal:</span><span className="font-bold">{printOs.invoiceNumber || '-'}</span></div>
             <div className="p-2 print:p-1"><span className="text-gray-600 block">Data da Emissão:</span><span className="font-bold">{printOs.createdAt ? new Date(printOs.createdAt).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR')}</span></div>
@@ -235,7 +246,7 @@ export default function PrintOsModal({ printOs, onClose, onWhatsApp, userRole = 
         </div>
 
         <div className="mb-3 md:mb-4 print:mb-1 border border-blue-900">
-          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">7. STATUS DA OS</div>
+          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">{userRole === 'CLIENT' ? '6.' : '7.'} STATUS DA OS</div>
           <div className="grid grid-cols-3 divide-x divide-blue-900 text-xs print:text-[10px] leading-tight items-center">
             <div className="p-2 print:p-1 text-center"><span className="text-gray-600 block">Status da OS:</span><span className="font-bold text-xs md:text-sm print:text-xs md:text-sm print:text-xs text-emerald-600 uppercase">{printOs.status === 'COMPLETED' ? 'Concluído' : printOs.status === 'IN_TRANSIT' ? 'Em Rota' : 'Pendente'}</span></div>
             <div className="p-2 print:p-1 text-center"><span className="text-gray-600 block">Data de Conclusão:</span><span className="font-bold">{printOs.completedAt ? new Date(printOs.completedAt).toLocaleDateString('pt-BR') : '-'}</span></div>
@@ -244,7 +255,7 @@ export default function PrintOsModal({ printOs, onClose, onWhatsApp, userRole = 
         </div>
 
         <div className="mb-3 md:mb-4 print:mb-1 border border-blue-900">
-          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">8. INFORMAÇÕES ADICIONAIS</div>
+          <div className="bg-blue-900 text-white font-bold px-2 py-1 text-xs print:text-[10px] leading-tight">{userRole === 'CLIENT' ? '7.' : '8.'} INFORMAÇÕES ADICIONAIS</div>
           <div className="p-2 text-xs print:text-[10px] leading-tight space-y-1 font-medium text-gray-700">
             <p>- O motorista deve portar esta OS durante todo o percurso.</p>
             <p>- Qualquer alteração deve ser comunicada imediatamente à empresa.</p>
