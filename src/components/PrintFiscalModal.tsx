@@ -140,18 +140,10 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
 
           <div className="mb-3 md:mb-4 md:mb-8">
             <h3 className="text-sm md:text-base font-bold uppercase text-slate-900 border-b border-slate-300 pb-2 mb-3 md:mb-4">3. Resumo dos Rendimentos do Período</h3>
-            <div className="grid grid-cols-3 gap-1.5 md:gap-4 text-center">
-              <div className="border border-slate-200 p-2 md:p-4 rounded">
-                <p className="text-xs font-bold text-slate-500 uppercase mb-1">Total Bruto de Fretes</p>
-                <p className="text-lg md:text-xl font-bold text-slate-900">{formatBRL(fiscalData.resumo.bruto)}</p>
-              </div>
-              <div className="border border-slate-200 p-2 md:p-4 rounded">
-                <p className="text-xs font-bold text-slate-500 uppercase mb-1">Total de Descontos/Retenções</p>
-                <p className="text-lg md:text-xl font-bold text-red-600">{formatBRL(fiscalData.resumo.retencoes)}</p>
-              </div>
-              <div className="border border-slate-200 p-2 md:p-4 rounded bg-indigo-50 border-indigo-100">
-                <p className="text-xs font-bold text-indigo-700 uppercase mb-1">Rendimento Líquido Pago</p>
-                <p className="text-xl font-black text-indigo-900">{formatBRL(fiscalData.resumo.liquido)}</p>
+            <div className="flex justify-center text-center">
+              <div className="border border-slate-200 p-2 md:p-6 rounded bg-indigo-50 border-indigo-100 min-w-[300px]">
+                <p className="text-sm font-bold text-indigo-700 uppercase mb-2">Rendimento Líquido Pago</p>
+                <p className="text-3xl font-black text-indigo-900">{formatBRL(fiscalData.resumo.liquido)}</p>
               </div>
             </div>
           </div>
@@ -164,15 +156,14 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
                   <th className="py-2 px-2">Data (Caixa)</th>
                   <th className="py-2 px-2">Nº OS</th>
                   <th className="py-2 px-2">Cliente Tomador</th>
-                  <th className="py-2 px-2 text-right">Valor Bruto</th>
-                  <th className="py-2 px-2 text-right">Descontos</th>
+                  
                   <th className="py-2 px-2 text-right">Líquido Recebido</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
                 {fiscalData.historico.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-4 text-center text-slate-500">Nenhum pagamento registrado neste período.</td>
+                    <td colSpan={4} className="py-4 text-center text-slate-500">Nenhum pagamento registrado neste período.</td>
                   </tr>
                 ) : (
                   fiscalData.historico.map((item, idx) => (
@@ -180,8 +171,7 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
                       <td className="py-2 px-2">{item.dataPagamento}</td>
                       <td className="py-2 px-2 font-medium">#{item.osId}</td>
                       <td className="py-2 px-2 max-w-[150px]">{item.cliente}</td>
-                      <td className="py-2 px-2 text-right">{formatBRL(item.bruto)}</td>
-                      <td className="py-2 px-2 text-right text-red-600">{formatBRL(item.descontos)}</td>
+                      
                       <td className="py-2 px-2 text-right font-bold">{formatBRL(item.liquido)}</td>
                     </tr>
                   ))
@@ -190,8 +180,6 @@ export default function PrintFiscalModal({ driver, orders, year, onClose }: Prin
               <tfoot>
                 <tr className="bg-slate-100 border-t-2 border-slate-800 font-bold avoid-break">
                   <td colSpan={3} className="py-3 px-2 text-right uppercase text-slate-700">TOTAIS NO ANO:</td>
-                  <td className="py-3 px-2 text-right">{formatBRL(fiscalData.resumo.bruto)}</td>
-                  <td className="py-3 px-2 text-right text-red-600">{formatBRL(fiscalData.resumo.retencoes)}</td>
                   <td className="py-3 px-2 text-right text-indigo-900">{formatBRL(fiscalData.resumo.liquido)}</td>
                 </tr>
               </tfoot>

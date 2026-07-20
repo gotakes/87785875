@@ -101,7 +101,7 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
                           step="0.01"
                           value={tier.prices[v]}
                           onChange={(e) => handlePriceChange(idx, v, e.target.value)}
-                          className="w-32 pl-7 pr-2 py-1.5 text-right border border-slate-200 rounded text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-xs md:text-sm font-medium"
+                          className="w-24 pl-7 pr-2 py-1.5 text-right border border-slate-200 rounded text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-xs md:text-sm font-medium"
                         />
                       </div>
                     </td>
@@ -121,7 +121,7 @@ export default function PricingTable({ tiers, excess, onSave, onBack }: PricingT
                         step="0.01"
                         value={localExcess[v]}
                         onChange={(e) => handleExcessChange(v, e.target.value)}
-                        className="w-32 pl-7 pr-2 py-1.5 text-right border border-amber-200 rounded text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm md:text-base font-bold bg-white"
+                        className="w-24 pl-7 pr-2 py-1.5 text-right border border-amber-200 rounded text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm md:text-base font-bold bg-white"
                       />
                     </div>
                   </td>

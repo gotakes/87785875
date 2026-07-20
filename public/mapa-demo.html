@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Navegação Motorista - Pro</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f4f4f4;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+        }
+
+        /* Card Superior: Informações de Rota (ETA) */
+        .top-panel {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 16px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-width: 250px;
+            transition: opacity 0.3s;
+        }
+        
+        .eta-time {
+            font-size: 20px;
+            font-weight: 700;
+            color: #05a565; /* Verde Uber */
+        }
+        
+        .eta-distance {
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            border-left: 1px solid #ddd;
+            padding-left: 12px;
+        }
+
+        /* Botão Flutuante de Recentralizar (GPS) */
+        .btn-recenter {
+            position: absolute;
+            bottom: 240px; /* Acima do painel inferior */
+            right: 16px;
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-recenter.active {
+            color: #276ef1; /* Azul Uber ativo */
+        }
+
+        .btn-recenter svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            color: inherit;
+        }
+
+        /* Painel inferior flutuante */
+        .bottom-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px 20px 32px 20px;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-handle {
+            width: 40px;
+            height: 5px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: -10px auto 16px auto;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* Estilos dos Botões */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn-primary {
+            background-color: #276ef1; /* Azul Uber */
+            color: #fff;
+        }
+
+        .btn-waze {
+            background-color: #33ccff;
+            color: #000;
+        }
+
+        .btn-google {
+            background-color: #f2f2f2;
+            color: #1a73e8;
+        }
+
+        /* Esconder controles padrão de texto do Routing Machine */
+        .leaflet-routing-container {
+            display: none !important;
+        }
+
+        /* Suavizar a transição do ícone do carro */
+        .car-marker-icon {
+            transition: transform 0.5s linear;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mapa -->
+    <div id="map"></div>
+
+    <!-- Informações de Rota (ETA) -->
+    <div class="top-panel" id="eta-panel" style="display: none;">
+        <div class="eta-time" id="eta-time">-- min</div>
+        <div class="eta-distance" id="eta-distance">-- km</div>
+    </div>
+
+    <!-- Botão de Recentralizar -->
+    <button class="btn-recenter active" id="btn-recenter" aria-label="Centralizar">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+        </svg>
+    </button>
+
+    <!-- Painel Inferior -->
+    <div class="bottom-panel">
+        <div class="panel-handle"></div>
+        <div class="panel-title">Navegação da Entrega</div>
+        
+        <button id="btn-app" class="btn btn-primary">Iniciar Navegação Interna</button>
+        <a id="btn-waze" href="#" class="btn btn-waze" target="_blank">Abrir no Waze</a>
+        <a id="btn-google" href="#" class="btn btn-google" target="_blank">Abrir no Google Maps</a>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // 1. Configurações e Estado
+        const DESTINO_LAT = -23.56168; // Exemplo: Av Paulista
+        const DESTINO_LNG = -46.65598;
+        
+        let driverMarker = null;
+        let routingControl = null;
+        let autoFollow = true; // Mantém a câmera presa no carro
+        let currentHeading = 0; // Rotação do carro
+
+        // 2. Inicializar o Mapa
+        const map = L.map('map', {
+            zoomControl: false 
+        }).setView([0, 0], 15);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap © CARTO'
+        }).addTo(map);
+
+        const destinationIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+        L.marker([DESTINO_LAT, DESTINO_LNG], { icon: destinationIcon }).addTo(map);
+
+        // Ícone do carro customizado (HTML) para permitir rotação CSS
+        const getCarIcon = (heading) => L.divIcon({
+            html: \`<img src="https://cdn-icons-png.flaticon.com/512/3204/3204061.png" style="width:40px; height:40px; transform: rotate(\${heading}deg);" class="car-marker-icon" id="car-img" />\`,
+            className: '',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        // 3. Funções de Rota (Leaflet Routing Machine)
+        function tracarRota(origemLat, origemLng) {
+            if (routingControl) {
+                routingControl.setWaypoints([
+                    L.latLng(origemLat, origemLng),
+                    L.latLng(DESTINO_LAT, DESTINO_LNG)
+                ]);
+            } else {
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(origemLat, origemLng),
+                        L.latLng(DESTINO_LAT, DESTINO_LNG)
+                    ],
+                    routeWhileDragging: false,
+                    addWaypoints: false,
+                    show: false,
+                    lineOptions: {
+                        styles: [{ color: '#276ef1', opacity: 0.9, weight: 6 }]
+                    },
+                    createMarker: function() { return null; } 
+                }).addTo(map);
+
+                // Escutar o evento de rota calculada para mostrar ETA/Distância
+                routingControl.on('routesfound', function(e) {
+                    const routes = e.routes;
+                    const summary = routes[0].summary;
+                    
+                    // Tempo (minutos)
+                    const tempoMinutos = Math.round(summary.totalTime / 60);
+                    // Distância (km)
+                    const distanciaKm = (summary.totalDistance / 1000).toFixed(1);
+                    
+                    document.getElementById('eta-time').innerText = tempoMinutos + ' min';
+                    document.getElementById('eta-distance').innerText = distanciaKm + ' km';
+                    document.getElementById('eta-panel').style.display = 'flex';
+                });
+            }
+        }
+
+        // 4. Rastreamento
+        if ('geolocation' in navigator) {
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Se o dispositivo fornecer a direção (bearing/heading), usamos. Senão, mantém a anterior.
+                    if (position.coords.heading !== null) {
+                        currentHeading = position.coords.heading;
+                    }
+
+                    if (!driverMarker) {
+                        driverMarker = L.marker([lat, lng], { icon: getCarIcon(currentHeading) }).addTo(map);
+                        atualizarLinksNavegacao(lat, lng);
+                        tracarRota(lat, lng);
+                    } else {
+                        driverMarker.setLatLng([lat, lng]);
+                        
+                        // Rotacionar carro suavemente
+                        const carImg = document.getElementById('car-img');
+                        if (carImg) {
+                            carImg.style.transform = \`rotate(\${currentHeading}deg)\`;
+                        }
+                    }
+
+                    // Se estiver no modo autoFollow, a câmera persegue o carro
+                    if (autoFollow) {
+                        map.setView([lat, lng], 17, { animate: true, duration: 1.5 });
+                    }
+                },
+                (error) => console.warn(error),
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+            );
+        }
+
+        // 5. Interações de UI
+
+        // Desativar Auto-Follow se o usuário mexer no mapa com o dedo
+        map.on('dragstart', () => {
+            autoFollow = false;
+            document.getElementById('btn-recenter').classList.remove('active');
+        });
+
+        // Botão Recentralizar
+        document.getElementById('btn-recenter').addEventListener('click', () => {
+            autoFollow = true;
+            document.getElementById('btn-recenter').classList.add('active');
+            if (driverMarker) {
+                map.setView(driverMarker.getLatLng(), 17, { animate: true, duration: 1 });
+            }
+        });
+
+        // Botão de Iniciar Navegação Interna
+        document.getElementById('btn-app').addEventListener('click', () => {
+            autoFollow = true;
+            document.getElementById('btn-recenter').classList.add('active');
+            if (driverMarker) {
+                map.setView(driverMarker.getLatLng(), 18, { animate: true, duration: 1 });
+            }
+        });
+
+        function atualizarLinksNavegacao(origemLat, origemLng) {
+            document.getElementById('btn-waze').href = \`https://waze.com/ul?ll=\${DESTINO_LAT},\${DESTINO_LNG}&navigate=yes\`;
+            document.getElementById('btn-google').href = \`https://www.google.com/maps/dir/?api=1&origin=\${origemLat},\${origemLng}&destination=\${DESTINO_LAT},\${DESTINO_LNG}\`;
+        }
+    </script>
+</body>
+</html>

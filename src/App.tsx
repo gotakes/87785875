@@ -20,7 +20,7 @@ function App() {
   const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(defaultPricingTiers);
   const [pricingExcess, setPricingExcess] = useState<PricingExcess>(defaultPricingExcess);
 
-  useEffect(() => {
+    useEffect(() => {
     // Listen to drivers collection
     const driversQ = query(collection(db, 'drivers'));
     const unsubscribeDrivers = onSnapshot(driversQ, (snapshot) => {
@@ -34,15 +34,28 @@ function App() {
     });
 
     // Listen to clients collection
-    const clientsQ = query(collection(db, 'clients'));
-    const unsubscribeClients = onSnapshot(clientsQ, (snapshot) => {
-      const clientsData: Client[] = [];
-      snapshot.forEach((doc) => {
-        clientsData.push({ id: doc.id, ...doc.data() } as Client);
+    let unsubscribeClients = () => {};
+    if (profile === 'ADMIN') {
+      const clientsQ = query(collection(db, 'clients'));
+      unsubscribeClients = onSnapshot(clientsQ, (snapshot) => {
+        const clientsData: Client[] = [];
+        snapshot.forEach((doc) => {
+          clientsData.push({ id: doc.id, ...doc.data() } as Client);
+        });
+        setClients(clientsData);
       });
-      setClients(clientsData);
-    });
-    
+    } else if (profile === 'CLIENT' && currentUserId) {
+      // Just fetch the current client so the UI can render
+      const unsubscribeCurrentClient = onSnapshot(doc(db, 'clients', currentUserId), (docSnap) => {
+        if (docSnap.exists()) {
+          setClients([{ id: docSnap.id, ...docSnap.data() } as Client]);
+        } else {
+          setClients([]);
+        }
+      });
+      unsubscribeClients = unsubscribeCurrentClient;
+    }
+
     // Listen to settings
     const settingsQ = query(collection(db, 'settings'));
     const unsubscribeSettings = onSnapshot(settingsQ, (snapshot) => {
@@ -55,24 +68,45 @@ function App() {
     });
 
     // Listen to orders collection
-    const ordersQ = query(collection(db, 'orders'));
-    const unsubscribeOrders = onSnapshot(ordersQ, (snapshot) => {
-      const ordersData: OrderService[] = [];
-      snapshot.forEach((doc) => {
-        ordersData.push({ id: doc.id, ...doc.data() } as OrderService);
+    let unsubscribeOrders = () => {};
+    if (profile === 'ADMIN') {
+      const ordersQ = query(collection(db, 'orders'));
+      unsubscribeOrders = onSnapshot(ordersQ, (snapshot) => {
+        const ordersData: OrderService[] = [];
+        snapshot.forEach((doc) => {
+          ordersData.push({ id: doc.id, ...doc.data() } as OrderService);
+        });
+        setOrders(ordersData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       });
-      setOrders(ordersData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-    }, (error) => {
-      console.error("Firestore orders onSnapshot error:", error);
-    });
+    } else if (profile === 'CLIENT' && currentUserId) {
+      const ordersQ = query(collection(db, 'orders'), where('clientId', '==', currentUserId));
+      unsubscribeOrders = onSnapshot(ordersQ, (snapshot) => {
+        const ordersData: OrderService[] = [];
+        snapshot.forEach((doc) => {
+          ordersData.push({ id: doc.id, ...doc.data() } as OrderService);
+        });
+        setOrders(ordersData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      });
+    } else if (profile === 'DRIVER' && currentUserId) {
+      const ordersQ = query(collection(db, 'orders'), where('driverId', '==', currentUserId));
+      unsubscribeOrders = onSnapshot(ordersQ, (snapshot) => {
+        const ordersData: OrderService[] = [];
+        snapshot.forEach((doc) => {
+          ordersData.push({ id: doc.id, ...doc.data() } as OrderService);
+        });
+        setOrders(ordersData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      });
+    } else {
+      setOrders([]);
+    }
 
     return () => {
       unsubscribeDrivers();
-      unsubscribeOrders();
       unsubscribeClients();
       unsubscribeSettings();
+      unsubscribeOrders();
     };
-  }, []);
+  }, [profile, currentUserId]);
 
   const handleLogin = async (role: 'ADMIN' | 'DRIVER' | 'CLIENT', userId?: string, password?: string) => {
     if (role === 'DRIVER' && userId) {

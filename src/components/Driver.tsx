@@ -1,3 +1,5 @@
+import { Capacitor, registerPlugin } from '@capacitor/core';
+const BackgroundGeolocation = registerPlugin<any>('BackgroundGeolocation');
 import { ExpandableCard } from './ExpandableCard';
 import React, { useState, useEffect, useRef } from 'react';
 import { Driver, OrderService } from '../types';
@@ -30,6 +32,7 @@ export default function DriverPanel({ driver, orders, onLogout }: DriverPanelPro
     const hasActiveOrder = orders.some(o => o.status === 'IN_TRANSIT');
     let watchId: number;
     let currentWakeLock: any = null;
+    let capWatcherId: string | null = null;
 
     const requestWakeLock = async () => {
       try {
@@ -72,40 +75,79 @@ export default function DriverPanel({ driver, orders, onLogout }: DriverPanelPro
       );
     };
 
-    if (navigator.geolocation && hasActiveOrder) {
+    const startBackgroundTracking = async () => {
+      try {
+        capWatcherId = await BackgroundGeolocation.addWatcher(
+          {
+            backgroundMessage: "Rastreamento em segundo plano ativo.",
+            backgroundTitle: "ElNathan Tracking",
+            requestPermissions: true,
+            stale: false,
+            distanceFilter: 0
+          },
+          (location: any, error: any) => {
+            if (error) {
+              console.warn('Capacitor Geolocation Error:', error);
+              return;
+            }
+            if (location) {
+              const locRef = doc(db, 'locations', driver.id);
+              setDoc(locRef, {
+                driverId: driver.id,
+                lat: location.latitude,
+                lng: location.longitude,
+                accuracy: location.accuracy,
+                speed: location.speed,
+                heading: location.bearing,
+                status: 'MOVING',
+                updatedAt: new Date().toISOString()
+              }, { merge: true }).catch(console.error);
+            }
+          }
+        );
+      } catch (e) {
+        console.error("Failed to start Capacitor background tracking", e);
+      }
+    };
+
+    if (hasActiveOrder) {
       const driverRef = doc(db, 'drivers', driver.id);
       updateDoc(driverRef, { status: 'MOVING' }).catch(console.error);
       
       requestWakeLock();
       document.addEventListener('visibilitychange', handleVisibilityChange);
 
-      // Usar watchPosition para melhor tracking em segundo plano no navegador
-      // O SO gerencia a captura com melhor eficiência de bateria
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const locRef = doc(db, 'locations', driver.id);
-          setDoc(locRef, {
-            driverId: driver.id,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            speed: position.coords.speed,
-            heading: position.coords.heading,
-            status: 'MOVING',
-            updatedAt: new Date().toISOString()
-          }, { merge: true }).catch(console.error);
-        },
-        (error) => {
-          console.warn('WatchPosition warning:', error.message);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 2000 }
-      );
-
+      if (Capacitor.isNativePlatform()) {
+        startBackgroundTracking();
+      } else if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const locRef = doc(db, 'locations', driver.id);
+            setDoc(locRef, {
+              driverId: driver.id,
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              speed: position.coords.speed,
+              heading: position.coords.heading,
+              status: 'MOVING',
+              updatedAt: new Date().toISOString()
+            }, { merge: true }).catch(console.error);
+          },
+          (error) => {
+            console.warn('WatchPosition warning:', error.message);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 2000 }
+        );
+      }
     } else {
       const driverRef = doc(db, 'drivers', driver.id);
       updateDoc(driverRef, { status: 'PARKED' }).catch(console.error);
       if (currentWakeLock !== null) {
         currentWakeLock.release().catch(console.error);
+      }
+      if (capWatcherId) {
+         BackgroundGeolocation.removeWatcher({ id: capWatcherId });
       }
     }
 
@@ -114,6 +156,9 @@ export default function DriverPanel({ driver, orders, onLogout }: DriverPanelPro
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (currentWakeLock !== null) {
         currentWakeLock.release().catch(console.error);
+      }
+      if (capWatcherId) {
+         BackgroundGeolocation.removeWatcher({ id: capWatcherId });
       }
     };
   }, [driver.id, orders]);

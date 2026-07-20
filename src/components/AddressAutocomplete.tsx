@@ -45,12 +45,15 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
       setErrorMsg(null);
       
       try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=BR&q=${encodeURIComponent(value)}`;
+        const url = '/api/geocode';
         const response = await fetch(url, {
+          method: 'POST',
+          credentials: 'include',
           signal: abortController.signal,
           headers: {
-            'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8'
-          }
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ query: value })
         });
         
         if (!response.ok) {
@@ -59,12 +62,24 @@ export default function AddressAutocomplete({ value, onChange, placeholder, clas
         
         const data = await response.json();
         
-        if (data && data.length > 0) {
-           const formattedResults = data.map((d: any) => ({
-             display_name: d.display_name,
-             lat: d.lat.toString(),
-             lon: d.lon.toString()
-           }));
+        if (data && data.features && data.features.length > 0) {
+           const formattedResults = data.features.map((f: any) => {
+             const props = f.properties;
+             const parts = [
+               props.name,
+               props.housenumber,
+               props.street,
+               props.district,
+               props.city,
+               props.state
+             ].filter(Boolean);
+             const uniqueParts = [...new Set(parts)];
+             return {
+               display_name: uniqueParts.join(', '),
+               lat: f.geometry.coordinates[1].toString(),
+               lon: f.geometry.coordinates[0].toString()
+             };
+           });
            setResults(formattedResults);
            setShowDropdown(true);
         } else {

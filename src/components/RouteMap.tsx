@@ -65,12 +65,13 @@ function Routing({ origin, destination, isRoundTrip, onRouteCalculated }: { orig
     
     const geocode = async (query: string) => {
       try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=BR`;
+        const url = '/api/geocode';
         const res = await fetch(url, {
+          method: 'POST',
+          credentials: 'include',
           signal: abortController.signal,
-          headers: {
-            'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8'
-          }
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
         });
         
         if (!res.ok) {
@@ -79,8 +80,10 @@ function Routing({ origin, destination, isRoundTrip, onRouteCalculated }: { orig
         }
         
         const data = await res.json();
-        if (data && data.length > 0) {
-          return L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
+        if (data && data.features && data.features.length > 0) {
+          const lat = data.features[0].geometry.coordinates[1];
+          const lon = data.features[0].geometry.coordinates[0];
+          return L.latLng(lat, lon);
         }
       } catch (err: any) {
         if (err.name === 'AbortError') return null;
